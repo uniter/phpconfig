@@ -53,6 +53,26 @@ describe('Config', () => {
             });
         });
 
+        it("should just return an empty object when no sub-library is given and the main library's config is undefined", () => {
+            const data = config.getConfigForLibrary(
+                'an_invalid_undefined_lib_config'
+            );
+
+            expect(data).toEqual({});
+        });
+
+        it("should just return the sub-library's config when a sub-library is given but the main library's config is undefined", () => {
+            const data = config.getConfigForLibrary(
+                'an_invalid_undefined_lib_config',
+                'my_sub_lib'
+            );
+
+            expect(data).toEqual({
+                'first_setting': 'first value',
+                'second_setting': 'second value',
+            });
+        });
+
         it("should throw when the main library's config is a boolean", () => {
             expect(() => {
                 config.getConfigForLibrary('an_invalid_boolean_lib_config');
@@ -82,14 +102,6 @@ describe('Config', () => {
                 config.getConfigForLibrary('an_invalid_string_lib_config');
             }).toThrow(
                 'Config for main library "an_invalid_string_lib_config" should be an object'
-            );
-        });
-
-        it("should throw when the main library's config is undefined", () => {
-            expect(() => {
-                config.getConfigForLibrary('an_invalid_undefined_lib_config');
-            }).toThrow(
-                'Config for main library "an_invalid_undefined_lib_config" should be an object'
             );
         });
     });

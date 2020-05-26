@@ -23,12 +23,16 @@ export default class Config implements ConfigInterface {
         mainLibraryName: string,
         subLibraryName?: string
     ): SettingValue {
-        const mainConfig: SettingValue = this.allConfig[mainLibraryName];
+        let mainConfig: SettingValue = this.allConfig[mainLibraryName];
 
         if (mainConfig === null) {
             throw new Error(
                 `Config for main library "${mainLibraryName}" should not be null`
             );
+        }
+
+        if (typeof mainConfig === 'undefined') {
+            mainConfig = {};
         }
 
         if (typeof mainConfig !== 'object') {
