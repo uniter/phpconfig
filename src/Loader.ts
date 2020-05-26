@@ -33,12 +33,6 @@ export default class Loader implements LoaderInterface {
             }
         }
 
-        throw new Error(
-            `File "${
-                this.fileName
-            }" was not found at any of the given search paths: ${searchDirectories.join(
-                ', '
-            )}`
-        );
+        return {};
     }
 }

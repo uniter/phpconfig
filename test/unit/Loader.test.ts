@@ -35,12 +35,8 @@ describe('Loader', () => {
             });
         });
 
-        it('should throw when the file is not found at any of the search paths', () => {
-            expect(() => {
-                loader.load(['/first/path', '/second/path']);
-            }).toThrow(
-                'File "my.file.ext" was not found at any of the given search paths: /first/path, /second/path'
-            );
+        it('should return an empty object when the file is not found at any of the search paths', () => {
+            expect(loader.load(['/first/path', '/second/path'])).toEqual({});
         });
     });
 });
