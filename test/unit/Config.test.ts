@@ -73,6 +73,15 @@ describe('Config', () => {
             });
         });
 
+        it('should just return an empty object when a sub-library is given but its config is undefined', () => {
+            const data = config.getConfigForLibrary(
+                'my_main_lib',
+                'an_invalid_undefined_sub_lib'
+            );
+
+            expect(data).toEqual({});
+        });
+
         it("should throw when the main library's config is a boolean", () => {
             expect(() => {
                 config.getConfigForLibrary('an_invalid_boolean_lib_config');
