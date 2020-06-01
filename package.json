@@ -20,8 +20,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*",
-    "src/**/*",
+    "dist/**",
+    "src/**",
     "MIT-LICENSE.txt",
     "README.md"
   ],
