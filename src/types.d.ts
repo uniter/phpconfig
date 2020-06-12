@@ -11,4 +11,4 @@ type ConfigData = {
     [libraryOrSettingName: string]: SettingValue;
 };
 
-type SettingValue = ConfigData | boolean | number | string | null;
+type SettingValue = ConfigData | boolean | null | number | string | undefined;

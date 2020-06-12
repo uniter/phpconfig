@@ -10,15 +10,18 @@
 import { default as sinon } from 'ts-sinon';
 import Loader from '../../src/Loader';
 
+type existsSync = sinon.SinonStub & ((file: string) => boolean);
+type require = sinon.SinonStub & ((file: string) => unknown);
+
 describe('Loader', () => {
-    let existsSync: sinon.SinonStub & ((file: string) => boolean);
+    let existsSync: existsSync;
     let loader: Loader;
-    let require: sinon.SinonStub & ((file: string) => unknown);
+    let require: require;
 
     describe('load()', () => {
         beforeEach(() => {
             existsSync = sinon.stub().returns(false);
-            require = sinon.stub();
+            require = (sinon.stub() as unknown) as require;
 
             loader = new Loader(existsSync, require, 'my.file.ext');
         });
