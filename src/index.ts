@@ -11,8 +11,12 @@ import { existsSync } from 'fs';
 import Loader from './Loader';
 import ConfigLoader from './ConfigLoader';
 import Config from './Config';
+import Requirer from './Requirer';
+
+const requirer = new Requirer(require);
 
 export default new ConfigLoader(
-    new Loader(existsSync, require, 'uniter.config.js'),
+    requirer,
+    new Loader(existsSync, requirer, 'uniter.config.js'),
     Config
 );

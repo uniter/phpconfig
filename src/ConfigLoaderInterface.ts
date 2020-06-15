@@ -17,6 +17,7 @@ export default interface ConfigLoaderInterface {
      * Fetches the config from a file within the given search paths
      *
      * @param {string[]} searchPaths
+     * @returns {ConfigInterface}
      */
     getConfig(searchPaths: string[]): ConfigInterface;
 }

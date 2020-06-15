@@ -17,9 +17,10 @@ export default interface ConfigInterface {
      *
      * @param {string} mainLibraryName
      * @param {string=} subLibraryName
+     * @returns {SubConfig[]}
      */
-    getConfigForLibrary(
+    getConfigsForLibrary(
         mainLibraryName: string,
         subLibraryName?: string
-    ): SettingValue;
+    ): SubConfig[];
 }

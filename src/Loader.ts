@@ -9,6 +9,7 @@
 
 import { join } from 'path';
 import LoaderInterface from './LoaderInterface';
+import RequirerInterface from './RequirerInterface';
 
 /**
  * Attempts to load a configuration file from one or more potential directories,
@@ -17,19 +18,19 @@ import LoaderInterface from './LoaderInterface';
 export default class Loader implements LoaderInterface {
     constructor(
         private existsSync: (path: string) => boolean,
-        private require: Function,
+        private requirer: RequirerInterface,
         private fileName: string
     ) {}
 
     /**
      * @inheritDoc
      */
-    load(searchDirectories: string[]): { [libraryName: string]: object } {
+    load(searchDirectories: string[]): RootConfig | SubConfig {
         for (const searchDirectory of searchDirectories) {
             const searchPath = join(searchDirectory, this.fileName);
 
             if (this.existsSync(searchPath)) {
-                return this.require(searchPath);
+                return this.requirer.require(searchPath);
             }
         }
 

@@ -7,29 +7,29 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { default as sinon } from 'ts-sinon';
+import sinon, { StubbedInstance, stubInterface } from 'ts-sinon';
 import Loader from '../../src/Loader';
+import RequirerInterface from '../../src/RequirerInterface';
 
 type existsSync = sinon.SinonStub & ((file: string) => boolean);
-type require = sinon.SinonStub & ((file: string) => unknown);
 
 describe('Loader', () => {
     let existsSync: existsSync;
     let loader: Loader;
-    let require: require;
+    let requirer: StubbedInstance<RequirerInterface>;
 
     describe('load()', () => {
         beforeEach(() => {
             existsSync = sinon.stub().returns(false);
-            require = (sinon.stub() as unknown) as require;
+            requirer = stubInterface<RequirerInterface>();
 
-            loader = new Loader(existsSync, require, 'my.file.ext');
+            loader = new Loader(existsSync, requirer, 'my.file.ext');
         });
 
         it('should require and return the module exports when the file exists at the second search path', () => {
             existsSync.withArgs('/first/path/my.file.ext').returns(false);
             existsSync.withArgs('/second/path/my.file.ext').returns(true);
-            require
+            requirer.require
                 .withArgs('/second/path/my.file.ext')
                 .returns({ my: 'config' });
 

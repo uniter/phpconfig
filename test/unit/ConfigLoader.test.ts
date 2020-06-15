@@ -12,46 +12,118 @@ import sinon, { StubbedInstance, stubInterface } from 'ts-sinon';
 import ConfigLoader from '../../src/ConfigLoader';
 import ConfigInterface from '../../src/ConfigInterface';
 import Config from '../../src/Config';
+import RequirerInterface from '../../src/RequirerInterface';
 
 type StubConfigClassType = sinon.SinonStub &
-    (new (allConfig: ConfigData) => ConfigInterface);
+    (new (
+        requirer: RequirerInterface,
+        allConfig: RootConfig
+    ) => ConfigInterface);
 
 describe('ConfigLoader', () => {
-    let StubConfigClass: StubConfigClassType;
     let configLoader: ConfigLoader;
     let loader: StubbedInstance<LoaderInterface>;
+    let requirer: StubbedInstance<RequirerInterface>;
+    let StubConfigClass: StubConfigClassType;
 
     beforeEach(() => {
         StubConfigClass = sinon.stub() as StubConfigClassType;
-        StubConfigClass.callsFake((allConfig: ConfigData) => {
-            const config: StubbedInstance<Config> = stubInterface(
-                StubConfigClass
-            );
+        StubConfigClass.callsFake(
+            (
+                requirer: RequirerInterface,
+                allConfig: RootConfig
+            ): ConfigInterface => {
+                const config: StubbedInstance<Config> = stubInterface<Config>();
 
-            config.getConfigForLibrary.callsFake(
-                (libraryName: string): SettingValue => {
-                    return allConfig[libraryName];
-                }
-            );
+                config.getConfigsForLibrary.callsFake(
+                    (libraryName: string): SubConfig[] => {
+                        return [
+                            (allConfig.settings ?? {
+                                [libraryName]: {
+                                    'my': 'fake plugin-derived config',
+                                },
+                            })[libraryName] as SubConfig,
+                        ];
+                    }
+                );
 
-            return config;
-        });
+                return config;
+            }
+        );
 
         loader = stubInterface<LoaderInterface>();
-        loader.load
-            .withArgs(['/first/path'])
-            .returns({ 'my_lib': { my: 'config' } });
 
-        configLoader = new ConfigLoader(loader, StubConfigClass);
+        requirer = stubInterface<RequirerInterface>();
+
+        configLoader = new ConfigLoader(requirer, loader, StubConfigClass);
     });
 
-    describe('getConfigForLibrary()', () => {
-        it('should be able to fetch the config for a library', () => {
+    describe('getConfigsForLibrary()', () => {
+        it('should be able to fetch the config for a library with settings config', () => {
+            loader.load.withArgs(['/first/path']).returns({
+                'settings': {
+                    'my_lib': { my: 'config' },
+                },
+            });
+
             const config = configLoader.getConfig(['/first/path']);
 
-            expect(config.getConfigForLibrary('my_lib')).toEqual({
-                my: 'config',
+            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+                {
+                    my: 'config',
+                },
+            ]);
+        });
+
+        it('should be able to fetch the config for a library with plugin config', () => {
+            loader.load.withArgs(['/first/path']).returns({
+                'plugins': [
+                    { 'my_first_lib': '/path/to/first_lib_config' },
+                    { 'my_second_lib': '/path/to/second_lib_config' },
+                ],
             });
+
+            const config = configLoader.getConfig(['/first/path']);
+
+            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+                {
+                    my: 'fake plugin-derived config',
+                },
+            ]);
+        });
+
+        it('should be able to fetch the config for a library with both plugin and settings configs', () => {
+            loader.load.withArgs(['/first/path']).returns({
+                'plugins': [
+                    { 'my_first_lib': '/path/to/first_lib_config' },
+                    { 'my_second_lib': '/path/to/second_lib_config' },
+                ],
+                'settings': {
+                    'my_lib': { my: 'config' },
+                },
+            });
+
+            const config = configLoader.getConfig(['/first/path']);
+
+            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+                {
+                    my: 'config',
+                },
+            ]);
+        });
+
+        it('should throw when the given config is invalid', () => {
+            loader.load.withArgs(['/first/path']).returns({
+                // Specify neither "settings" nor "plugins" -
+                // one (or both) must be specified
+                'this is': 'not valid',
+            });
+
+            expect(() => {
+                configLoader.getConfig(['/first/path']);
+            }).toThrow(
+                'Given root config is invalid: must specify one of "plugins" or "settings" or both'
+            );
         });
     });
 });

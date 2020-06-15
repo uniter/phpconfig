@@ -16,7 +16,8 @@ export default interface LoaderInterface {
      * Attempts to load the file at one of the given search directories, in sequence.
      *
      * @param {string[]} searchDirectories
+     * @returns {RootConfig|SubConfig}
      * @throws {Error} Throws when file was not found at any of the given search directory paths
      */
-    load(searchDirectories: string[]): { [libraryName: string]: object };
+    load(searchDirectories: string[]): RootConfig | SubConfig;
 }

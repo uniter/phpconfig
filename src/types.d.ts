@@ -7,8 +7,35 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-type ConfigData = {
-    [libraryOrSettingName: string]: SettingValue;
+type RootConfig =
+    | {
+          plugins?: PluginConfig[];
+          settings: Settings;
+      }
+    | {
+          plugins: PluginConfig[];
+          settings?: Settings;
+      };
+
+type Settings = {
+    [libraryName: string]: SubConfig;
 };
 
-type SettingValue = ConfigData | boolean | null | number | string | undefined;
+type PluginConfig = {
+    // Plugins should be specified in their own separate modules,
+    // so the value should only ever be a path string if not nullish
+    [libraryName: string]: null | string | undefined;
+};
+
+type SubConfig = {
+    [propertyName: string]: SettingValue;
+};
+
+type SettingValue =
+    | SettingValue[]
+    | SubConfig
+    | boolean
+    | null
+    | number
+    | string
+    | undefined;

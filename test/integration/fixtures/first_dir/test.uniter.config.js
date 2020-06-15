@@ -1,5 +1,7 @@
 module.exports = {
-    'my_lib': {
-        'my_option': 'my value',
+    'settings': {
+        'my_lib': {
+            'my_setting': 'my value',
+        },
     },
 };
