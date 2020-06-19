@@ -12,6 +12,7 @@ import { existsSync } from 'fs';
 import Loader from '../../src/Loader';
 import ConfigLoader from '../../src/ConfigLoader';
 import Requirer from '../../src/Requirer';
+import ConfigSet from '../../src/ConfigSet';
 
 describe('Config load integration', () => {
     let configLoader: ConfigLoader;
@@ -21,11 +22,11 @@ describe('Config load integration', () => {
     beforeEach(() => {
         requirer = new Requirer(require);
         loader = new Loader(existsSync, requirer, 'test.uniter.config.js');
-        configLoader = new ConfigLoader(requirer, loader, Config);
+        configLoader = new ConfigLoader(requirer, loader, Config, ConfigSet);
     });
 
     it('should load the first matching file that exists', () => {
-        const data = configLoader
+        const configSet = configLoader
             .getConfig([
                 __dirname + '/fixtures/non_existent/',
                 __dirname + '/fixtures/first_dir',
@@ -34,7 +35,7 @@ describe('Config load integration', () => {
             ])
             .getConfigsForLibrary('my_lib');
 
-        expect(data).toEqual([
+        expect(configSet.toArray()).toEqual([
             {
                 'my_setting': 'my value',
             },
@@ -45,15 +46,15 @@ describe('Config load integration', () => {
         const config = configLoader.getConfig([
                 __dirname + '/fixtures/plugin_test',
             ]),
-            parserLibConfig = config.getConfigsForLibrary(
+            parserLibConfigSet = config.getConfigsForLibrary(
                 'my_main_lib',
                 'my_parser_lib'
             ),
-            transpilerLibConfig = config.getConfigsForLibrary(
+            transpilerLibConfigSet = config.getConfigsForLibrary(
                 'my_transpiler_lib'
             );
 
-        expect(parserLibConfig).toEqual([
+        expect(parserLibConfigSet.toArray()).toEqual([
             { 'my_parser_setting': 'my first value from combined plugin' },
             { 'my_parser_setting': 'my value from plugin 1' },
             {
@@ -62,7 +63,7 @@ describe('Config load integration', () => {
             },
             { 'my_parser_setting': 'my custom value' },
         ]);
-        expect(transpilerLibConfig).toEqual([
+        expect(transpilerLibConfigSet.toArray()).toEqual([
             { 'my_transpiler_setting': 'my second value from combined plugin' },
             {
                 'my_transpiler_setting':

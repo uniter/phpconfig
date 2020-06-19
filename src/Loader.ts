@@ -12,8 +12,7 @@ import LoaderInterface from './LoaderInterface';
 import RequirerInterface from './RequirerInterface';
 
 /**
- * Attempts to load a configuration file from one or more potential directories,
- * stopping at the first one where a file with the given name is found
+ * @inheritDoc
  */
 export default class Loader implements LoaderInterface {
     constructor(

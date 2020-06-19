@@ -28,7 +28,7 @@ type PluginConfig = {
 };
 
 type SubConfig = {
-    [propertyName: string]: SettingValue;
+    [settingName: string]: SettingValue;
 };
 
 type SettingValue =

@@ -13,6 +13,7 @@ import ConfigLoader from '../../src/ConfigLoader';
 import ConfigInterface from '../../src/ConfigInterface';
 import Config from '../../src/Config';
 import RequirerInterface from '../../src/RequirerInterface';
+import ConfigSet from '../../src/ConfigSet';
 
 type StubConfigClassType = sinon.SinonStub &
     (new (
@@ -36,14 +37,14 @@ describe('ConfigLoader', () => {
                 const config: StubbedInstance<Config> = stubInterface<Config>();
 
                 config.getConfigsForLibrary.callsFake(
-                    (libraryName: string): SubConfig[] => {
-                        return [
+                    (libraryName: string): ConfigSet => {
+                        return new ConfigSet([
                             (allConfig.settings ?? {
                                 [libraryName]: {
                                     'my': 'fake plugin-derived config',
                                 },
                             })[libraryName] as SubConfig,
-                        ];
+                        ]);
                     }
                 );
 
@@ -55,7 +56,12 @@ describe('ConfigLoader', () => {
 
         requirer = stubInterface<RequirerInterface>();
 
-        configLoader = new ConfigLoader(requirer, loader, StubConfigClass);
+        configLoader = new ConfigLoader(
+            requirer,
+            loader,
+            StubConfigClass,
+            ConfigSet
+        );
     });
 
     describe('getConfigsForLibrary()', () => {
@@ -68,7 +74,7 @@ describe('ConfigLoader', () => {
 
             const config = configLoader.getConfig(['/first/path']);
 
-            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
                 {
                     my: 'config',
                 },
@@ -85,7 +91,7 @@ describe('ConfigLoader', () => {
 
             const config = configLoader.getConfig(['/first/path']);
 
-            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
                 {
                     my: 'fake plugin-derived config',
                 },
@@ -105,9 +111,21 @@ describe('ConfigLoader', () => {
 
             const config = configLoader.getConfig(['/first/path']);
 
-            expect(config.getConfigsForLibrary('my_lib')).toEqual([
+            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
                 {
                     my: 'config',
+                },
+            ]);
+        });
+
+        it('should allow an empty config', () => {
+            loader.load.withArgs(['/first/path']).returns({});
+
+            const config = configLoader.getConfig(['/first/path']);
+
+            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
+                {
+                    'my': 'fake plugin-derived config',
                 },
             ]);
         });
@@ -122,7 +140,7 @@ describe('ConfigLoader', () => {
             expect(() => {
                 configLoader.getConfig(['/first/path']);
             }).toThrow(
-                'Given root config is invalid: must specify one of "plugins" or "settings" or both'
+                'Given root config is invalid: may only specify "plugins" or "settings" or both'
             );
         });
     });

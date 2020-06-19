@@ -10,6 +10,7 @@
 import Config from '../../src/Config';
 import { StubbedInstance, stubInterface } from 'ts-sinon';
 import RequirerInterface from '../../src/RequirerInterface';
+import ConfigSet from '../../src/ConfigSet';
 
 describe('Config', () => {
     let config: Config;
@@ -18,34 +19,38 @@ describe('Config', () => {
     beforeEach(() => {
         requirer = stubInterface<RequirerInterface>();
 
-        config = new Config(requirer, {
-            'settings': {
-                'my_main_lib': {
-                    'my_sub_lib': {
-                        'first_setting': '[overridden] first value',
+        config = new Config(
+            requirer,
+            {
+                'settings': {
+                    'my_main_lib': {
+                        'my_sub_lib': {
+                            'first_setting': '[overridden] first value',
+                        },
                     },
+                    'my_sub_lib': {
+                        'first_setting': 'first value',
+                        'second_setting': 'second value',
+                    },
+                    'an_invalid_boolean_lib_config': true,
+                    'an_invalid_null_lib_config': null,
+                    'an_invalid_number_lib_config': 1234,
+                    'an_invalid_string_lib_config': 'my string',
+                    'an_invalid_undefined_lib_config': undefined,
                 },
-                'my_sub_lib': {
-                    'first_setting': 'first value',
-                    'second_setting': 'second value',
-                },
-                'an_invalid_boolean_lib_config': true,
-                'an_invalid_null_lib_config': null,
-                'an_invalid_number_lib_config': 1234,
-                'an_invalid_string_lib_config': 'my string',
-                'an_invalid_undefined_lib_config': undefined,
-            },
-        } as never); // Use "never" type as the above config is (deliberately) partially invalid
+            } as never, // Use "never" type as the above config is (deliberately) partially invalid
+            ConfigSet
+        );
     });
 
     describe('getConfigsForLibrary()', () => {
         it('should be able to fetch the merged config for a library', () => {
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
                 'my_sub_lib'
             );
 
-            expect(data).toEqual([
+            expect(configSet.toArray()).toEqual([
                 {
                     'first_setting': '[overridden] first value',
                     'second_setting': 'second value',
@@ -54,9 +59,9 @@ describe('Config', () => {
         });
 
         it('should not attempt to merge config when no sub-library is given', () => {
-            const data = config.getConfigsForLibrary('my_sub_lib');
+            const configSet = config.getConfigsForLibrary('my_sub_lib');
 
-            expect(data).toEqual([
+            expect(configSet.toArray()).toEqual([
                 {
                     'first_setting': 'first value',
                     'second_setting': 'second value',
@@ -65,20 +70,20 @@ describe('Config', () => {
         });
 
         it("should just return an empty array when no sub-library is given and the main library's config is undefined", () => {
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'an_invalid_undefined_lib_config'
             );
 
-            expect(data).toEqual([]);
+            expect(configSet.toArray()).toEqual([]);
         });
 
         it("should just return the sub-library's config when a sub-library is given but the main library's config is undefined", () => {
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'an_invalid_undefined_lib_config',
                 'my_sub_lib'
             );
 
-            expect(data).toEqual([
+            expect(configSet.toArray()).toEqual([
                 {
                     'first_setting': 'first value',
                     'second_setting': 'second value',
@@ -87,12 +92,12 @@ describe('Config', () => {
         });
 
         it('should just return an empty array when a sub-library is given but its config is undefined', () => {
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
                 'an_invalid_undefined_sub_lib'
             );
 
-            expect(data).toEqual([]);
+            expect(configSet.toArray()).toEqual([]);
         });
 
         it('should fetch any settings from plugins', () => {
@@ -109,37 +114,41 @@ describe('Config', () => {
                 .returns({
                     'my_second_setting_for_sub_lib': 9876,
                 });
-            config = new Config(requirer, {
-                'plugins': [
-                    {
-                        'my_main_lib': '/path/to/my/main_lib_config',
-                    },
-                    {
-                        'my_sub_lib': '/path/to/my/first_sub_lib_config',
-                    },
-                    {
-                        'my_sub_lib': '/path/to/my/second_sub_lib_config',
-                    },
-                ],
-                'settings': {
-                    'my_main_lib': {
+            config = new Config(
+                requirer,
+                {
+                    'plugins': [
+                        {
+                            'my_main_lib': '/path/to/my/main_lib_config',
+                        },
+                        {
+                            'my_sub_lib': '/path/to/my/first_sub_lib_config',
+                        },
+                        {
+                            'my_sub_lib': '/path/to/my/second_sub_lib_config',
+                        },
+                    ],
+                    'settings': {
+                        'my_main_lib': {
+                            'my_sub_lib': {
+                                'first_setting': '[overridden] first value',
+                            },
+                        },
                         'my_sub_lib': {
-                            'first_setting': '[overridden] first value',
+                            'first_setting': 'first value',
+                            'second_setting': 'second value',
                         },
                     },
-                    'my_sub_lib': {
-                        'first_setting': 'first value',
-                        'second_setting': 'second value',
-                    },
                 },
-            });
+                ConfigSet
+            );
 
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
                 'my_sub_lib'
             );
 
-            expect(data).toEqual([
+            expect(configSet.toArray()).toEqual([
                 { 'my_first_setting_for_sub_lib': 101 },
                 { 'my_second_setting_for_sub_lib': 9876 },
                 {
@@ -150,25 +159,29 @@ describe('Config', () => {
         });
 
         it('should throw when a plugin attempts to give main-library config inline rather than a path', () => {
-            config = new Config(requirer, {
-                'plugins': [
-                    {
+            config = new Config(
+                requirer,
+                {
+                    'plugins': [
+                        {
+                            'my_main_lib': {
+                                'this is': 'not valid - I should be a path',
+                            },
+                        },
+                    ],
+                    'settings': {
                         'my_main_lib': {
-                            'this is': 'not valid - I should be a path',
+                            'my_sub_lib': {
+                                'first_setting': 'first value',
+                            },
                         },
-                    },
-                ],
-                'settings': {
-                    'my_main_lib': {
                         'my_sub_lib': {
-                            'first_setting': 'first value',
+                            'second_setting': 'second value',
                         },
                     },
-                    'my_sub_lib': {
-                        'second_setting': 'second value',
-                    },
-                },
-            } as never); // Use "never" type as the above config is (deliberately) partially invalid
+                } as never, // Use "never" type as the above config is (deliberately) partially invalid
+                ConfigSet
+            );
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib', 'my_sub_lib');
@@ -176,25 +189,29 @@ describe('Config', () => {
         });
 
         it('should throw when a plugin attempts to give sub-library config inline rather than a path', () => {
-            config = new Config(requirer, {
-                'plugins': [
-                    {
+            config = new Config(
+                requirer,
+                {
+                    'plugins': [
+                        {
+                            'my_sub_lib': {
+                                'this is': 'not valid - I should be a path',
+                            },
+                        },
+                    ],
+                    'settings': {
+                        'my_main_lib': {
+                            'my_sub_lib': {
+                                'first_setting': 'first value',
+                            },
+                        },
                         'my_sub_lib': {
-                            'this is': 'not valid - I should be a path',
+                            'second_setting': 'second value',
                         },
                     },
-                ],
-                'settings': {
-                    'my_main_lib': {
-                        'my_sub_lib': {
-                            'first_setting': 'first value',
-                        },
-                    },
-                    'my_sub_lib': {
-                        'second_setting': 'second value',
-                    },
-                },
-            } as never); // Use "never" type as the above config is (deliberately) partially invalid
+                } as never, // Use "never" type as the above config is (deliberately) partially invalid
+                ConfigSet
+            );
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib', 'my_sub_lib');
@@ -210,11 +227,11 @@ describe('Config', () => {
         });
 
         it("should ignore when the main library's config is null", () => {
-            const data = config.getConfigsForLibrary(
+            const configSet = config.getConfigsForLibrary(
                 'an_invalid_null_lib_config'
             );
 
-            expect(data).toEqual([]);
+            expect(configSet.toArray()).toEqual([]);
         });
 
         it("should throw when the main library's config is a number", () => {

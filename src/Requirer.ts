@@ -9,6 +9,9 @@
 
 import RequirerInterface from './RequirerInterface';
 
+/**
+ * @inheritDoc
+ */
 export default class Requirer implements RequirerInterface {
     constructor(private nodeRequire: Function) {}
 

@@ -12,11 +12,13 @@ import Loader from './Loader';
 import ConfigLoader from './ConfigLoader';
 import Config from './Config';
 import Requirer from './Requirer';
+import ConfigSet from './ConfigSet';
 
 const requirer = new Requirer(require);
 
 export default new ConfigLoader(
     requirer,
     new Loader(existsSync, requirer, 'uniter.config.js'),
-    Config
+    Config,
+    ConfigSet
 );

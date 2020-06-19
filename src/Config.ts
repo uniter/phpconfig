@@ -9,6 +9,7 @@
 
 import ConfigInterface from './ConfigInterface';
 import RequirerInterface from './RequirerInterface';
+import ConfigSetInterface from './ConfigSetInterface';
 
 /**
  * Fetches the config for the given library from the root config
@@ -121,13 +122,13 @@ function isEmpty(subConfig: SubConfig): boolean {
 }
 
 /**
- * Contains an entire loaded config, potentially containing the configuration
- * for multiple libraries inside
+ * @inheritDoc
  */
 export default class Config implements ConfigInterface {
     constructor(
         private requirer: RequirerInterface,
-        private allConfig: RootConfig
+        private allConfig: RootConfig,
+        private ConfigSet: new (configs: SubConfig[]) => ConfigSetInterface
     ) {}
 
     /**
@@ -136,7 +137,7 @@ export default class Config implements ConfigInterface {
     getConfigsForLibrary(
         mainLibraryName: string,
         subLibraryName?: string
-    ): SubConfig[] {
+    ): ConfigSetInterface {
         const configs = [];
 
         if (this.allConfig.plugins) {
@@ -164,6 +165,6 @@ export default class Config implements ConfigInterface {
             configs.push(topLevelConfig);
         }
 
-        return configs;
+        return new this.ConfigSet(configs);
     }
 }

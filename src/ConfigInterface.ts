@@ -7,6 +7,8 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import ConfigSetInterface from './ConfigSetInterface';
+
 /**
  * Contains an entire loaded config, potentially containing the configuration
  * for multiple libraries inside
@@ -17,10 +19,10 @@ export default interface ConfigInterface {
      *
      * @param {string} mainLibraryName
      * @param {string=} subLibraryName
-     * @returns {SubConfig[]}
+     * @returns {ConfigSetInterface}
      */
     getConfigsForLibrary(
         mainLibraryName: string,
         subLibraryName?: string
-    ): SubConfig[];
+    ): ConfigSetInterface;
 }

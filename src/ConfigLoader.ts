@@ -11,6 +11,7 @@ import ConfigInterface from './ConfigInterface';
 import LoaderInterface from './LoaderInterface';
 import ConfigLoaderInterface from './ConfigLoaderInterface';
 import RequirerInterface from './RequirerInterface';
+import ConfigSetInterface from './ConfigSetInterface';
 
 /**
  * A type predicate for determining at runtime whether a valid root config was given.
@@ -19,11 +20,16 @@ import RequirerInterface from './RequirerInterface';
  * @returns {boolean}
  */
 function isValidConfig(config: RootConfig | SubConfig): config is RootConfig {
-    return Boolean(config.plugins || config.settings);
+    return (
+        Object.keys(config).filter((settingName: string) => {
+            // Only the keys "plugins" and/or "settings" are allowed
+            return settingName !== 'plugins' && settingName !== 'settings';
+        }).length === 0
+    );
 }
 
 /**
- * Attempts to load a config file from the given list of search paths
+ * @inheritDoc
  */
 export default class ConfigLoader implements ConfigLoaderInterface {
     constructor(
@@ -31,8 +37,10 @@ export default class ConfigLoader implements ConfigLoaderInterface {
         private loader: LoaderInterface,
         private Config: new (
             requirer: RequirerInterface,
-            allConfig: RootConfig
-        ) => ConfigInterface
+            allConfig: RootConfig,
+            ConfigSet: new (configs: SubConfig[]) => ConfigSetInterface
+        ) => ConfigInterface,
+        private ConfigSet: new (configs: SubConfig[]) => ConfigSetInterface
     ) {}
 
     /**
@@ -43,10 +51,10 @@ export default class ConfigLoader implements ConfigLoaderInterface {
 
         if (!isValidConfig(allConfig)) {
             throw new Error(
-                'Given root config is invalid: must specify one of "plugins" or "settings" or both'
+                'Given root config is invalid: may only specify "plugins" or "settings" or both'
             );
         }
 
-        return new this.Config(this.requirer, allConfig);
+        return new this.Config(this.requirer, allConfig, this.ConfigSet);
     }
 }
