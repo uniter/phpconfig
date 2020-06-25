@@ -23,6 +23,13 @@ type Settings = {
 
 type PluginConfig = {
     // Plugins should be specified in their own separate modules,
+    // so the value should only ever be a path string (for main library config)
+    // or a nested sub-library config if not nullish
+    [libraryName: string]: null | string | SubLibraryConfig | undefined;
+};
+
+type SubLibraryConfig = {
+    // Plugins should be specified in their own separate modules,
     // so the value should only ever be a path string if not nullish
     [libraryName: string]: null | string | undefined;
 };
