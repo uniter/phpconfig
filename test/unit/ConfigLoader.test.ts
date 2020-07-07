@@ -7,22 +7,20 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import LoaderInterface from '../../src/LoaderInterface';
 import sinon, { StubbedInstance, stubInterface } from 'ts-sinon';
-import ConfigLoader from '../../src/ConfigLoader';
-import ConfigInterface from '../../src/ConfigInterface';
 import Config from '../../src/Config';
-import RequirerInterface from '../../src/RequirerInterface';
+import ConfigExporterInterface from '../../src/ConfigExporterInterface';
+import ConfigInterface from '../../src/ConfigInterface';
+import ConfigLoader from '../../src/ConfigLoader';
 import ConfigSet from '../../src/ConfigSet';
+import LoaderInterface from '../../src/LoaderInterface';
+import RequirerInterface from '../../src/RequirerInterface';
 
-type StubConfigClassType = sinon.SinonStub &
-    (new (
-        requirer: RequirerInterface,
-        allConfig: RootConfig
-    ) => ConfigInterface);
+type StubConfigClassType = sinon.SinonStub & typeof Config;
 
 describe('ConfigLoader', () => {
     let configLoader: ConfigLoader;
+    let exporter: StubbedInstance<ConfigExporterInterface>;
     let loader: StubbedInstance<LoaderInterface>;
     let requirer: StubbedInstance<RequirerInterface>;
     let StubConfigClass: StubConfigClassType;
@@ -52,82 +50,46 @@ describe('ConfigLoader', () => {
             }
         );
 
+        exporter = stubInterface<ConfigExporterInterface>();
         loader = stubInterface<LoaderInterface>();
-
         requirer = stubInterface<RequirerInterface>();
 
         configLoader = new ConfigLoader(
             requirer,
             loader,
+            exporter,
             StubConfigClass,
             ConfigSet
         );
     });
 
-    describe('getConfigsForLibrary()', () => {
-        it('should be able to fetch the config for a library with settings config', () => {
+    describe('getConfig()', () => {
+        it('should be able to fetch the config for a library', () => {
+            const config = stubInterface<ConfigInterface>();
+            StubConfigClass.withArgs(
+                sinon.match.same(requirer),
+                sinon.match.same(exporter),
+                {
+                    'settings': {
+                        'my_lib': { my: 'config' },
+                    },
+                },
+                sinon.match.same(ConfigSet)
+            ).returns(config);
             loader.load.withArgs(['/first/path']).returns({
                 'settings': {
                     'my_lib': { my: 'config' },
                 },
             });
 
-            const config = configLoader.getConfig(['/first/path']);
-
-            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
-                {
-                    my: 'config',
-                },
-            ]);
-        });
-
-        it('should be able to fetch the config for a library with plugin config', () => {
-            loader.load.withArgs(['/first/path']).returns({
-                'plugins': [
-                    { 'my_first_lib': '/path/to/first_lib_config' },
-                    { 'my_second_lib': '/path/to/second_lib_config' },
-                ],
-            });
-
-            const config = configLoader.getConfig(['/first/path']);
-
-            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
-                {
-                    my: 'fake plugin-derived config',
-                },
-            ]);
-        });
-
-        it('should be able to fetch the config for a library with both plugin and settings configs', () => {
-            loader.load.withArgs(['/first/path']).returns({
-                'plugins': [
-                    { 'my_first_lib': '/path/to/first_lib_config' },
-                    { 'my_second_lib': '/path/to/second_lib_config' },
-                ],
-                'settings': {
-                    'my_lib': { my: 'config' },
-                },
-            });
-
-            const config = configLoader.getConfig(['/first/path']);
-
-            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
-                {
-                    my: 'config',
-                },
-            ]);
-        });
-
-        it('should allow an empty config', () => {
-            loader.load.withArgs(['/first/path']).returns({});
-
-            const config = configLoader.getConfig(['/first/path']);
-
-            expect(config.getConfigsForLibrary('my_lib').toArray()).toEqual([
-                {
-                    'my': 'fake plugin-derived config',
-                },
-            ]);
+            // NB: We cannot use expect(result).toStrictEqual(config) here,
+            //     because of the strange way Jest recursively attempts to match for a strict equality -
+            //     Sinon stubs the [Symbol.iterator] method, so that it then returns undefined,
+            //     which causes `TypeError: Result of the Symbol.iterator method is not an object`
+            //     to be raised in the for..of loop of expect/build/utils.js::iterableEquality()
+            expect(configLoader.getConfig(['/first/path']) === config).toEqual(
+                true
+            );
         });
 
         it('should throw when the given config is invalid', () => {

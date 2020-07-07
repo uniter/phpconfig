@@ -7,6 +7,17 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+type LibraryConfigShape = {
+    libraryName: string;
+    topLevelConfig: SubConfig;
+    pluginConfigFilePaths: string[];
+};
+
+type ExportedLibraryConfig = {
+    libraryName: string;
+    configs: SubConfig[];
+};
+
 type RootConfig =
     | {
           plugins?: PluginConfig[];

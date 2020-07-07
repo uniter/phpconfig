@@ -7,24 +7,9 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import Config from '../../src/Config';
-import { existsSync } from 'fs';
-import Loader from '../../src/Loader';
-import ConfigLoader from '../../src/ConfigLoader';
-import Requirer from '../../src/Requirer';
-import ConfigSet from '../../src/ConfigSet';
+import { configLoader } from '../..';
 
 describe('Config load integration', () => {
-    let configLoader: ConfigLoader;
-    let loader: Loader;
-    let requirer: Requirer;
-
-    beforeEach(() => {
-        requirer = new Requirer(require);
-        loader = new Loader(existsSync, requirer, 'test.uniter.config.js');
-        configLoader = new ConfigLoader(requirer, loader, Config, ConfigSet);
-    });
-
     it('should load the first matching file that exists', () => {
         const configSet = configLoader
             .getConfig([
@@ -74,8 +59,10 @@ describe('Config load integration', () => {
             { 'my_parser_setting': 'my first value from combined plugin' },
             { 'my_parser_setting': 'my value from plugin 1' },
             {
-                'my_other_parser_setting1': 'my first value from plugin 2',
                 'my_other_parser_setting2': 'my second value from plugin 2',
+            },
+            {
+                'my_other_parser_setting1': 'my first value from plugin 2',
             },
             {
                 'my_parser_setting_from_root_1':

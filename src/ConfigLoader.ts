@@ -7,11 +7,13 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import Config from './Config';
+import ConfigExporterInterface from './ConfigExporterInterface';
 import ConfigInterface from './ConfigInterface';
-import LoaderInterface from './LoaderInterface';
 import ConfigLoaderInterface from './ConfigLoaderInterface';
+import ConfigSet from './ConfigSet';
+import LoaderInterface from './LoaderInterface';
 import RequirerInterface from './RequirerInterface';
-import ConfigSetInterface from './ConfigSetInterface';
 
 /**
  * A type predicate for determining at runtime whether a valid root config was given.
@@ -35,26 +37,28 @@ export default class ConfigLoader implements ConfigLoaderInterface {
     constructor(
         private requirer: RequirerInterface,
         private loader: LoaderInterface,
-        private Config: new (
-            requirer: RequirerInterface,
-            allConfig: RootConfig,
-            ConfigSet: new (configs: SubConfig[]) => ConfigSetInterface
-        ) => ConfigInterface,
-        private ConfigSet: new (configs: SubConfig[]) => ConfigSetInterface
+        private exporter: ConfigExporterInterface,
+        private ConfigClass: typeof Config,
+        private ConfigSetClass: typeof ConfigSet
     ) {}
 
     /**
      * @inheritDoc
      */
     getConfig(searchPaths: string[]): ConfigInterface {
-        const allConfig = this.loader.load(searchPaths);
+        const rootConfig = this.loader.load(searchPaths);
 
-        if (!isValidConfig(allConfig)) {
+        if (!isValidConfig(rootConfig)) {
             throw new Error(
                 'Given root config is invalid: may only specify "plugins" or "settings" or both'
             );
         }
 
-        return new this.Config(this.requirer, allConfig, this.ConfigSet);
+        return new this.ConfigClass(
+            this.requirer,
+            this.exporter,
+            rootConfig,
+            this.ConfigSetClass
+        );
     }
 }

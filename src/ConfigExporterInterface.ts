@@ -7,36 +7,28 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import ConfigSetInterface from './ConfigSetInterface';
-
 /**
- * Contains an entire loaded config, potentially containing the configuration
- * for multiple libraries inside
+ * Exports the config for a specific main- or sub-library
+ * to a structure with the (serialisable) root config and the paths
+ * to any additional config set modules from plugins.
+ *
+ * If the root config for the library is not serialisable,
+ * then an error will be raised.
  */
-export default interface ConfigInterface {
+export default interface ConfigExporterInterface {
     /**
      * Extracts the config for the specified main- or sub-library,
      * in a structure where any relevant modules from plugins are kept
      * in path form so that they may be compiled into a JS bundle
      *
+     * @param {RootConfig} rootConfig
      * @param {string} mainLibraryName
      * @param {string} subLibraryName
      * @returns {LibraryConfigShape}
      */
     exportLibrary(
+        rootConfig: RootConfig,
         mainLibraryName: string,
         subLibraryName?: string
     ): LibraryConfigShape;
-
-    /**
-     * Fetches the config for the given library within the given search paths
-     *
-     * @param {string} mainLibraryName
-     * @param {string=} subLibraryName
-     * @returns {ConfigSetInterface}
-     */
-    getConfigsForLibrary(
-        mainLibraryName: string,
-        subLibraryName?: string
-    ): ConfigSetInterface;
 }

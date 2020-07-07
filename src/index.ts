@@ -8,17 +8,26 @@
  */
 
 import { existsSync } from 'fs';
-import Loader from './Loader';
-import ConfigLoader from './ConfigLoader';
 import Config from './Config';
-import Requirer from './Requirer';
+import ConfigExporter from './ConfigExporter';
+import ConfigImporter from './ConfigImporter';
+import ConfigLoader from './ConfigLoader';
 import ConfigSet from './ConfigSet';
+import Loader from './Loader';
+import Requirer from './Requirer';
+
+const UNIFIED_CONFIG_FILE_NAME = 'uniter.config.js';
 
 const requirer = new Requirer(require);
 
-export default new ConfigLoader(
+const configLoader = new ConfigLoader(
     requirer,
-    new Loader(existsSync, requirer, 'uniter.config.js'),
+    new Loader(existsSync, requirer, UNIFIED_CONFIG_FILE_NAME),
+    new ConfigExporter(),
     Config,
     ConfigSet
 );
+
+const configImporter = new ConfigImporter(ConfigSet);
+
+export { configImporter, configLoader };
