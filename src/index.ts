@@ -15,6 +15,7 @@ import ConfigLoader from './ConfigLoader';
 import ConfigSet from './ConfigSet';
 import Loader from './Loader';
 import Requirer from './Requirer';
+import SerialisationChecker from './SerialisationChecker';
 
 const UNIFIED_CONFIG_FILE_NAME = 'uniter.config.js';
 
@@ -23,7 +24,7 @@ const requirer = new Requirer(require);
 const configLoader = new ConfigLoader(
     requirer,
     new Loader(existsSync, requirer, UNIFIED_CONFIG_FILE_NAME),
-    new ConfigExporter(),
+    new ConfigExporter(new SerialisationChecker()),
     Config,
     ConfigSet
 );

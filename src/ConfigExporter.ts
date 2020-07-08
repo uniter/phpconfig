@@ -8,6 +8,7 @@
  */
 
 import ConfigExporterInterface from './ConfigExporterInterface';
+import SerialisationCheckerInterface from './SerialisationCheckerInterface';
 
 const hasOwn = {}.hasOwnProperty;
 
@@ -220,6 +221,8 @@ function getLibraryConfigPathsFromPlugins(
  * @inheritDoc
  */
 export default class ConfigExporter implements ConfigExporterInterface {
+    constructor(private serialisationChecker: SerialisationCheckerInterface) {}
+
     /**
      * @inheritDoc
      */
@@ -228,16 +231,21 @@ export default class ConfigExporter implements ConfigExporterInterface {
         mainLibraryName: string,
         subLibraryName?: string
     ): LibraryConfigShape {
+        const libraryName = subLibraryName ?? mainLibraryName;
         const topLevelConfig = getLibraryConfigFromRoot(
             rootConfig,
             mainLibraryName,
             subLibraryName
         );
 
-        // TODO: Now check the top-level config is serialisable, and throw if not
+        if (!this.serialisationChecker.isSerialisable(topLevelConfig)) {
+            throw new Error(
+                `Top-level config for library "${libraryName}" is not serialisable`
+            );
+        }
 
         return {
-            libraryName: subLibraryName ?? mainLibraryName,
+            libraryName: libraryName,
             topLevelConfig: topLevelConfig,
             pluginConfigFilePaths: rootConfig.plugins
                 ? getLibraryConfigPathsFromPlugins(

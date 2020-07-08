@@ -7,11 +7,14 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { StubbedInstance, stubInterface } from 'ts-sinon';
 import ConfigExporter from '../../src/ConfigExporter';
+import SerialisationCheckerInterface from '../../src/SerialisationCheckerInterface';
 
 describe('ConfigExporter', () => {
     let exporter: ConfigExporter;
     let rootConfig: RootConfig;
+    let serialisationChecker: StubbedInstance<SerialisationCheckerInterface>;
 
     beforeEach(() => {
         rootConfig = {
@@ -32,11 +35,14 @@ describe('ConfigExporter', () => {
                 'an_invalid_undefined_lib_config': undefined,
             },
         } as never; // Use "never" type as the above config is (deliberately) partially invalid
+        serialisationChecker = stubInterface<SerialisationCheckerInterface>();
 
-        exporter = new ConfigExporter();
+        serialisationChecker.isSerialisable.returns(true);
+
+        exporter = new ConfigExporter(serialisationChecker);
     });
 
-    describe('getConfigsForLibrary()', () => {
+    describe('exportLibrary()', () => {
         it('should be able to fetch the merged config for a library', () => {
             const configShape = exporter.exportLibrary(
                 rootConfig,
@@ -357,6 +363,21 @@ describe('ConfigExporter', () => {
                 );
             }).toThrow(
                 'Config for main library "an_invalid_string_lib_config" should be an object'
+            );
+        });
+
+        it('should throw when the top-level config is not serialisable', () => {
+            serialisationChecker.isSerialisable
+                .withArgs({
+                    'first_setting': '[overridden] first value',
+                    'second_setting': 'second value',
+                })
+                .returns(false);
+
+            expect(() => {
+                exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib');
+            }).toThrow(
+                'Top-level config for library "my_sub_lib" is not serialisable'
             );
         });
     });
