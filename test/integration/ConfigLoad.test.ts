@@ -7,9 +7,17 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { configLoader } from '../..';
+import { createConfigLoader } from '../..';
+import { existsSync } from 'fs';
+import ConfigLoaderInterface from '../../src/ConfigLoaderInterface';
 
 describe('Config load integration', () => {
+    let configLoader: ConfigLoaderInterface;
+
+    beforeEach(() => {
+        configLoader = createConfigLoader(existsSync);
+    });
+
     it('should load the first matching file that exists', () => {
         const configSet = configLoader
             .getConfig([

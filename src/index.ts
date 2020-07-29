@@ -7,7 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { existsSync } from 'fs';
+import { existsSync as existsSyncForType } from 'fs';
 import Config from './Config';
 import ConfigExporter from './ConfigExporter';
 import ConfigImporter from './ConfigImporter';
@@ -16,19 +16,23 @@ import ConfigSet from './ConfigSet';
 import Loader from './Loader';
 import Requirer from './Requirer';
 import SerialisationChecker from './SerialisationChecker';
+import ConfigLoaderInterface from './ConfigLoaderInterface';
 
 const UNIFIED_CONFIG_FILE_NAME = 'uniter.config.js';
 
 const requirer = new Requirer(require);
 
-const configLoader = new ConfigLoader(
-    requirer,
-    new Loader(existsSync, requirer, UNIFIED_CONFIG_FILE_NAME),
-    new ConfigExporter(new SerialisationChecker()),
-    Config,
-    ConfigSet
-);
+const createConfigLoader = (
+    existsSync: typeof existsSyncForType
+): ConfigLoaderInterface =>
+    new ConfigLoader(
+        requirer,
+        new Loader(existsSync, requirer, UNIFIED_CONFIG_FILE_NAME),
+        new ConfigExporter(new SerialisationChecker()),
+        Config,
+        ConfigSet
+    );
 
 const configImporter = new ConfigImporter(ConfigSet);
 
-export { configImporter, configLoader };
+export { configImporter, createConfigLoader };

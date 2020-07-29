@@ -7,9 +7,17 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { configLoader } from '../..';
+import { createConfigLoader } from '../..';
+import { existsSync } from 'fs';
+import ConfigLoaderInterface from '../../src/ConfigLoaderInterface';
 
 describe('Config export integration', () => {
+    let configLoader: ConfigLoaderInterface;
+
+    beforeEach(() => {
+        configLoader = createConfigLoader(existsSync);
+    });
+
     it('should export the config for the specified sub-library', () => {
         const exportedLibraryConfig = configLoader
             .getConfig([__dirname + '/fixtures/plugin_test'])
