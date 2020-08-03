@@ -24,6 +24,30 @@ export default interface ConfigSetInterface {
     concatArrays(settingName: string): SettingValue[];
 
     /**
+     * Extracts all values for the given boolean setting and merges those values into a final one,
+     * with later configs' settings taking priority. Object values will always
+     * be recursively merged, with values overridden, whereas arrays will always
+     * be concatenated together. If the setting has no values specified in any config,
+     * the default value will be returned instead. If the setting has a value that is not a boolean,
+     * an error will be raised.
+     *
+     * @param {string} settingName
+     * @param {boolean=} defaultValue (Defaults to false)
+     * @returns {boolean}
+     * @throws {Error} Throws when a non-boolean value is given for the setting
+     */
+    getBoolean(settingName: string, defaultValue: boolean): boolean;
+
+    /**
+     * Merges the settings for all configs into one, with later configs' settings
+     * taking priority. Object values will always be recursively merged, with
+     * values overridden, whereas arrays will always be concatenated together.
+     *
+     * @returns {SubConfig}
+     */
+    mergeAll(): SubConfig;
+
+    /**
      * Extracts all values for the given setting and merges those objects
      * into one final object, with later installed plugins and finally
      * the root config taking precedence.

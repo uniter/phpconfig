@@ -84,6 +84,154 @@ describe('ConfigSet', () => {
         });
     });
 
+    describe('getBoolean()', () => {
+        it('should return the default value of true when no config specifies a value for the setting', () => {
+            configSet = new ConfigSet([{ 'my-other-setting': 21 }, {}, {}]);
+
+            expect(configSet.getBoolean('my-setting', true)).toEqual(true);
+        });
+
+        it('should return the default value of false when no config specifies a value for the setting', () => {
+            configSet = new ConfigSet([
+                {},
+                { 'your-other-setting': 'a value' },
+                {},
+            ]);
+
+            expect(configSet.getBoolean('my-setting', false)).toEqual(false);
+        });
+
+        it("should allow later configs' values to take precedence", () => {
+            configSet = new ConfigSet([
+                {
+                    myBoolean: false,
+                    myNumber: 123,
+                    myString: 'hello',
+                },
+                {
+                    yourScalar: 'a value',
+                },
+                {
+                    myBoolean: true,
+                    myNumber: 987,
+                    myString: 'well hello!',
+                },
+            ]);
+
+            expect(configSet.getBoolean('myBoolean')).toEqual(true);
+        });
+
+        it('should raise an error when the final value for the setting has a non-boolean value', () => {
+            configSet = new ConfigSet([
+                {
+                    myBoolean: false,
+                },
+                {
+                    yourScalar: 'a value',
+                },
+                {
+                    myBoolean: 'not a valid value',
+                },
+            ]);
+
+            expect(() => {
+                configSet.getBoolean('myBoolean');
+            }).toThrow(
+                'Expected value for setting "myBoolean" to be a boolean but it was a string'
+            );
+        });
+    });
+
+    describe('mergeAll()', () => {
+        it('should just return an empty object when only empty configs given', () => {
+            configSet = new ConfigSet([{}, {}, {}]);
+
+            expect(configSet.mergeAll()).toEqual({});
+        });
+
+        it("should allow later configs' scalar values to take precedence", () => {
+            configSet = new ConfigSet([
+                {
+                    myBoolean: false,
+                    myNumber: 123,
+                    myString: 'hello',
+                },
+                {
+                    yourScalar: 'a value',
+                },
+                {
+                    myBoolean: true,
+                    myNumber: 987,
+                    myString: 'well hello!',
+                },
+            ]);
+
+            expect(configSet.mergeAll()).toEqual({
+                myBoolean: true,
+                myNumber: 987,
+                myString: 'well hello!',
+                yourScalar: 'a value',
+            });
+        });
+
+        it('should merge object values for the same setting', () => {
+            configSet = new ConfigSet([
+                {
+                    myObject: { first: 21 },
+                },
+                {
+                    yourObject: { aNumber: 987 },
+                },
+                {
+                    myObject: { second: 101 },
+                },
+            ]);
+
+            expect(configSet.mergeAll()).toEqual({
+                myObject: { first: 21, second: 101 },
+                yourObject: { aNumber: 987 },
+            });
+        });
+
+        it('should concatenate array values for the same setting', () => {
+            configSet = new ConfigSet([
+                {
+                    myArray: ['first'],
+                },
+                {
+                    yourArray: ['a value'],
+                },
+                {
+                    myArray: ['second'],
+                },
+            ]);
+
+            expect(configSet.mergeAll()).toEqual({
+                myArray: ['first', 'second'],
+                yourArray: ['a value'],
+            });
+        });
+
+        it('should allow an array to replace a scalar', () => {
+            configSet = new ConfigSet([
+                {
+                    myValue: 'I am not an array',
+                },
+                {
+                    yourScalar: 'a value',
+                },
+                {
+                    myValue: ['my first element', 'my second element'],
+                },
+            ]);
+
+            expect(configSet.mergeAll()).toEqual({
+                myValue: ['my first element', 'my second element'],
+                yourScalar: 'a value',
+            });
+        });
+    });
+
     describe('mergeObjects()', () => {
         it('should correctly merge all object values for the specified setting', () => {
             expect(configSet.mergeObjects('my_object_setting')).toEqual({
