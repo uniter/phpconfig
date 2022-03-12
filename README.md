@@ -1,6 +1,6 @@
 # PHPConfig
 
-[![Build Status](https://secure.travis-ci.org/uniter/phpconfig.png?branch=master)](http://travis-ci.org/uniter/phpconfig)
+[![Build Status](https://github.com/uniter/phpconfig/workflows/CI/badge.svg)](https://github.com/uniter/phpconfig/actions?query=workflow%3ACI)
 
 Loads Uniter's PHP configuration. Used by [Uniter's Webpack loader][] (via [PHPify][]) and [DotPHP][].
 
