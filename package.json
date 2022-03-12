@@ -28,9 +28,9 @@
   "scripts": {
     "build": "tsc -p src",
     "jest": "jest '/test/.*\\.test\\.ts$'",
-    "lint:check": "eslint '{src,test}/**/*.ts' && tsc --noEmit",
-    "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
-    "prepublishOnly": "npm test && npm run build",
+    "lint:check": "npm run build && eslint '{src,test}/**/*.ts'",
+    "lint:fix": "npm run build && eslint '{src,test}/**/*.ts' --fix",
+    "prepublishOnly": "npm test",
     "test": "npm run lint:check && npm run jest"
   },
   "dependencies": {},
