@@ -13,7 +13,8 @@ import SerialisationCheckerInterface from './SerialisationCheckerInterface';
  * @inheritDoc
  */
 export default class SerialisationChecker
-    implements SerialisationCheckerInterface {
+    implements SerialisationCheckerInterface
+{
     /**
      * @inheritDoc
      */

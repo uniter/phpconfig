@@ -13,7 +13,7 @@ import RequirerInterface from './RequirerInterface';
  * @inheritDoc
  */
 export default class Requirer implements RequirerInterface {
-    constructor(private nodeRequire: Function) {}
+    constructor(private nodeRequire: typeof require) {}
 
     /**
      * @inheritDoc

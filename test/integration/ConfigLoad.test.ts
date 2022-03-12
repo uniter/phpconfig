@@ -44,9 +44,8 @@ describe('Config load integration', () => {
                 'my_main_lib',
                 'my_parser_lib'
             ),
-            transpilerLibConfigSet = config.getConfigsForLibrary(
-                'my_transpiler_lib'
-            );
+            transpilerLibConfigSet =
+                config.getConfigsForLibrary('my_transpiler_lib');
 
         expect(mainLibConfigSet.toArray()).toEqual([
             {

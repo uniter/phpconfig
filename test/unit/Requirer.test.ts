@@ -10,14 +10,14 @@
 import Requirer from '../../src/Requirer';
 import sinon from 'ts-sinon';
 
-type require = sinon.SinonStub & ((file: string) => unknown);
+type require = sinon.SinonStub & typeof require;
 
 describe('Requirer', () => {
     let nodeRequire: require;
     let requirer: Requirer;
 
     beforeEach(() => {
-        nodeRequire = (sinon.stub() as unknown) as require;
+        nodeRequire = sinon.stub() as unknown as require;
 
         requirer = new Requirer(nodeRequire);
     });
