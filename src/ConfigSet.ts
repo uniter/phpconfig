@@ -84,9 +84,10 @@ export default class ConfigSet implements ConfigSetInterface {
 
                     if (Array.isArray(mergedConfig[settingName])) {
                         // Setting in work area is also an array: just concatenate onto the end
-                        (mergedConfig[settingName] as SettingValue[]).push(
-                            ...settingValue
-                        );
+                        // without modifying the original.
+                        mergedConfig[settingName] = (
+                            mergedConfig[settingName] as SettingValue[]
+                        ).concat(settingValue);
                     } else {
                         // Setting in work area is not an array: this one should replace the value completely
                         mergedConfig[settingName] = settingValue;

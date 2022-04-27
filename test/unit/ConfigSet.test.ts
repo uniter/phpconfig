@@ -193,6 +193,32 @@ describe('ConfigSet', () => {
             });
         });
 
+        it('should not modify the original object values for the same setting', () => {
+            const config1 = {
+                    myObject: { first: 21 },
+                },
+                config2 = {
+                    yourObject: { aNumber: 987 },
+                },
+                config3 = {
+                    myObject: { second: 101 },
+                };
+
+            configSet = new ConfigSet([config1, config2, config3]);
+
+            configSet.mergeAll();
+
+            expect(config1).toEqual({
+                myObject: { first: 21 },
+            });
+            expect(config2).toEqual({
+                yourObject: { aNumber: 987 },
+            });
+            expect(config3).toEqual({
+                myObject: { second: 101 },
+            });
+        });
+
         it('should concatenate array values for the same setting', () => {
             configSet = new ConfigSet([
                 {
@@ -209,6 +235,32 @@ describe('ConfigSet', () => {
             expect(configSet.mergeAll()).toEqual({
                 myArray: ['first', 'second'],
                 yourArray: ['a value'],
+            });
+        });
+
+        it('should not modify the original array values for the same setting', () => {
+            const object1 = {
+                    myArray: ['first'],
+                },
+                object2 = {
+                    yourArray: ['a value'],
+                },
+                object3 = {
+                    myArray: ['second'],
+                };
+
+            configSet = new ConfigSet([object1, object2, object3]);
+
+            configSet.mergeAll();
+
+            expect(object1).toEqual({
+                myArray: ['first'],
+            });
+            expect(object2).toEqual({
+                yourArray: ['a value'],
+            });
+            expect(object3).toEqual({
+                myArray: ['second'],
             });
         });
 
