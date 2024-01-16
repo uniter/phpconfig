@@ -46,7 +46,7 @@ describe('ConfigImporter', () => {
                             'my_setting': 21,
                         },
                     ],
-                }) === configSet
+                }) === configSet,
             ).toStrictEqual(true);
         });
     });

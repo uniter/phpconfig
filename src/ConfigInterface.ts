@@ -25,7 +25,7 @@ export default interface ConfigInterface {
      */
     exportLibrary(
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): LibraryConfigShape;
 
     /**
@@ -37,6 +37,6 @@ export default interface ConfigInterface {
      */
     getConfigsForLibrary(
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): ConfigSetInterface;
 }

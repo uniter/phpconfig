@@ -87,7 +87,7 @@ describe('Config', () => {
 
             const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
-                'my_sub_lib'
+                'my_sub_lib',
             );
 
             expect(configSet.toArray()).toEqual([
@@ -123,7 +123,7 @@ describe('Config', () => {
 
             const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
-                'my_sub_lib'
+                'my_sub_lib',
             );
 
             expect(configSet.toArray()).toEqual([
@@ -154,7 +154,7 @@ describe('Config', () => {
 
             const configSet = config.getConfigsForLibrary(
                 'my_main_lib',
-                'my_sub_lib'
+                'my_sub_lib',
             );
 
             expect(configSet.toArray()).toEqual([
@@ -172,13 +172,13 @@ describe('Config', () => {
             });
             requirer.require.withArgs('/my/main_lib_plugin_path').returns(
                 // Use "never" type as this config is (deliberately) invalid
-                1234 as never
+                1234 as never,
             );
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib');
             }).toThrow(
-                'Imported config for main library "my_main_lib" should be an object'
+                'Imported config for main library "my_main_lib" should be an object',
             );
         });
 
@@ -192,13 +192,13 @@ describe('Config', () => {
                 });
             requirer.require.withArgs('/my/sub_lib_plugin_path').returns(
                 // Use "never" type as this config is (deliberately) invalid
-                1234 as never
+                1234 as never,
             );
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib', 'my_sub_lib');
             }).toThrow(
-                'Imported config for sub-library "my_sub_lib" under main library "my_main_lib" should be an object'
+                'Imported config for sub-library "my_sub_lib" under main library "my_main_lib" should be an object',
             );
         });
     });

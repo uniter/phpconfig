@@ -39,7 +39,7 @@ export default class ConfigLoader implements ConfigLoaderInterface {
         private loader: LoaderInterface,
         private exporter: ConfigExporterInterface,
         private ConfigClass: typeof Config,
-        private ConfigSetClass: typeof ConfigSet
+        private ConfigSetClass: typeof ConfigSet,
     ) {}
 
     /**
@@ -50,7 +50,7 @@ export default class ConfigLoader implements ConfigLoaderInterface {
 
         if (!isValidConfig(rootConfig)) {
             throw new Error(
-                'Given root config is invalid: may only specify "plugins" or "settings" or both'
+                'Given root config is invalid: may only specify "plugins" or "settings" or both',
             );
         }
 
@@ -58,7 +58,7 @@ export default class ConfigLoader implements ConfigLoaderInterface {
             this.requirer,
             this.exporter,
             rootConfig,
-            this.ConfigSetClass
+            this.ConfigSetClass,
         );
     }
 }

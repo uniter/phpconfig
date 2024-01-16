@@ -28,7 +28,7 @@ export default class ConfigSet implements ConfigSetInterface {
 
             if (!Array.isArray(settingValue)) {
                 throw new Error(
-                    `Invalid value for setting ${settingName}: all values must be arrays but ${typeof settingValue} (${settingValue}) given`
+                    `Invalid value for setting ${settingName}: all values must be arrays but ${typeof settingValue} (${settingValue}) given`,
                 );
             }
 
@@ -56,7 +56,7 @@ export default class ConfigSet implements ConfigSetInterface {
 
         if (typeof settingValue !== 'boolean') {
             throw new Error(
-                `Expected value for setting "${settingName}" to be a boolean but it was a ${typeof settingValue}`
+                `Expected value for setting "${settingName}" to be a boolean but it was a ${typeof settingValue}`,
             );
         }
 
@@ -97,7 +97,7 @@ export default class ConfigSet implements ConfigSetInterface {
                     Object.assign(
                         mergedConfig[settingName] ??
                             (mergedConfig[settingName] = {}),
-                        settingValue
+                        settingValue,
                     );
                 }
             }
@@ -121,7 +121,7 @@ export default class ConfigSet implements ConfigSetInterface {
 
             if (typeof settingValue !== 'object') {
                 throw new Error(
-                    `Invalid value for setting ${settingName}: all values must be objects but ${typeof settingValue} (${settingValue}) given`
+                    `Invalid value for setting ${settingName}: all values must be objects but ${typeof settingValue} (${settingValue}) given`,
                 );
             }
 
@@ -148,7 +148,7 @@ export default class ConfigSet implements ConfigSetInterface {
 
                 if (typeof settingValue !== 'object') {
                     throw new Error(
-                        `Invalid value for setting ${settingName}: all values must be objects but ${typeof settingValue} (${settingValue}) given`
+                        `Invalid value for setting ${settingName}: all values must be objects but ${typeof settingValue} (${settingValue}) given`,
                     );
                 }
             } else {
@@ -172,7 +172,7 @@ export default class ConfigSet implements ConfigSetInterface {
                     throw new Error(
                         `Invalid value for setting ${propertyOrSettingName}: all objects \
 must be unique but ${propertyOrSetting} has both value \
-(${mergedConfig[propertyName]}) and value (${newValue})`
+(${mergedConfig[propertyName]}) and value (${newValue})`,
                     );
                 }
             }

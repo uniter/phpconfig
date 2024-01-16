@@ -28,7 +28,7 @@ describe('Requirer', () => {
             nodeRequire.withArgs('/my/path/to/my_module').returns(myExports);
 
             expect(requirer.require('/my/path/to/my_module')).toEqual(
-                myExports
+                myExports,
             );
         });
     });

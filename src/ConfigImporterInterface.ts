@@ -20,6 +20,6 @@ export default interface ConfigImporterInterface {
      * @returns {ConfigSetInterface}
      */
     importLibrary(
-        exportedLibraryConfig: ExportedLibraryConfig
+        exportedLibraryConfig: ExportedLibraryConfig,
     ): ConfigSetInterface;
 }

@@ -23,14 +23,14 @@ const UNIFIED_CONFIG_FILE_NAME = 'uniter.config.js';
 const requirer = new Requirer(require);
 
 const createConfigLoader = (
-    existsSync: typeof existsSyncForType
+    existsSync: typeof existsSyncForType,
 ): ConfigLoaderInterface =>
     new ConfigLoader(
         requirer,
         new Loader(existsSync, requirer, UNIFIED_CONFIG_FILE_NAME),
         new ConfigExporter(new SerialisationChecker()),
         Config,
-        ConfigSet
+        ConfigSet,
     );
 
 const configImporter = new ConfigImporter(ConfigSet);

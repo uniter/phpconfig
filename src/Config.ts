@@ -25,7 +25,7 @@ export default class Config implements ConfigInterface {
         private requirer: RequirerInterface,
         private exporter: ConfigExporterInterface,
         private rootConfig: RootConfig,
-        private ConfigSetClass: typeof ConfigSet
+        private ConfigSetClass: typeof ConfigSet,
     ) {}
 
     /**
@@ -33,12 +33,12 @@ export default class Config implements ConfigInterface {
      */
     exportLibrary(
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): LibraryConfigShape {
         return this.exporter.exportLibrary(
             this.rootConfig,
             mainLibraryName,
-            subLibraryName
+            subLibraryName,
         );
     }
 
@@ -47,12 +47,12 @@ export default class Config implements ConfigInterface {
      */
     getConfigsForLibrary(
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): ConfigSetInterface {
         const libraryConfig = this.exporter.exportLibrary(
             this.rootConfig,
             mainLibraryName,
-            subLibraryName
+            subLibraryName,
         );
         const configs = libraryConfig.pluginConfigFilePaths.map((path) => {
             const pluginConfig = this.requirer.require(path) ?? {};
@@ -61,7 +61,7 @@ export default class Config implements ConfigInterface {
                 throw new Error(
                     subLibraryName
                         ? `Imported config for sub-library "${subLibraryName}" under main library "${mainLibraryName}" should be an object`
-                        : `Imported config for main library "${mainLibraryName}" should be an object`
+                        : `Imported config for main library "${mainLibraryName}" should be an object`,
                 );
             }
 

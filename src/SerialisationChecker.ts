@@ -24,7 +24,7 @@ export default class SerialisationChecker
 
     private isObjectSerialisable(
         object: Record<string, unknown>,
-        objectsSeen: unknown[] = []
+        objectsSeen: unknown[] = [],
     ): boolean {
         if (objectsSeen.includes(object)) {
             return false;
@@ -55,7 +55,7 @@ export default class SerialisationChecker
 
     private isValueSerialisable(
         value: unknown,
-        objectsSeen: unknown[] = []
+        objectsSeen: unknown[] = [],
     ): boolean {
         if (
             value == null ||
@@ -69,7 +69,7 @@ export default class SerialisationChecker
         if (typeof value === 'object') {
             return this.isObjectSerialisable(
                 value as Record<string, unknown>,
-                objectsSeen
+                objectsSeen,
             );
         }
 

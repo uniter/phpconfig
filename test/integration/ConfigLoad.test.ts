@@ -42,7 +42,7 @@ describe('Config load integration', () => {
             mainLibConfigSet = config.getConfigsForLibrary('my_main_lib'),
             parserLibConfigSet = config.getConfigsForLibrary(
                 'my_main_lib',
-                'my_parser_lib'
+                'my_parser_lib',
             ),
             transpilerLibConfigSet =
                 config.getConfigsForLibrary('my_transpiler_lib');

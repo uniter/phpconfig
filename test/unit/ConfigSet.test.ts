@@ -79,7 +79,7 @@ describe('ConfigSet', () => {
                 configSet.concatArrays('my_array_setting');
             }).toThrow(
                 'Invalid value for setting my_array_setting: all values must be arrays ' +
-                    'but string (I am not valid, as I am not an array!) given'
+                    'but string (I am not valid, as I am not an array!) given',
             );
         });
     });
@@ -137,7 +137,7 @@ describe('ConfigSet', () => {
             expect(() => {
                 configSet.getBoolean('myBoolean');
             }).toThrow(
-                'Expected value for setting "myBoolean" to be a boolean but it was a string'
+                'Expected value for setting "myBoolean" to be a boolean but it was a string',
             );
         });
     });
@@ -330,7 +330,7 @@ describe('ConfigSet', () => {
                 configSet.mergeObjects('my_object_setting');
             }).toThrow(
                 'Invalid value for setting my_object_setting: all values must be objects ' +
-                    'but string (I am not valid, as I am not an object!) given'
+                    'but string (I am not valid, as I am not an object!) given',
             );
         });
     });
@@ -338,7 +338,7 @@ describe('ConfigSet', () => {
     describe('mergeUniqueObjects()', () => {
         it('should correctly merge all object values for the specified setting', () => {
             expect(
-                configSet.mergeUniqueObjects('my_unique_object_setting')
+                configSet.mergeUniqueObjects('my_unique_object_setting'),
             ).toEqual({
                 'first': 'one',
                 'second': 'two',
@@ -374,7 +374,7 @@ describe('ConfigSet', () => {
             ]);
 
             expect(
-                configSet.mergeUniqueObjects('my_unique_object_setting')
+                configSet.mergeUniqueObjects('my_unique_object_setting'),
             ).toEqual({
                 'first': 'one',
                 'last': 'two',
@@ -398,7 +398,7 @@ describe('ConfigSet', () => {
             ]);
 
             expect(
-                configSet.mergeUniqueObjects('my_unique_object_setting')
+                configSet.mergeUniqueObjects('my_unique_object_setting'),
             ).toEqual({
                 'first': 'one',
                 'second': 'two',
@@ -441,7 +441,7 @@ describe('ConfigSet', () => {
                 configSet.mergeUniqueObjects('my_unique_object_setting');
             }).toThrow(
                 'Invalid value for setting my_unique_object_setting: all values must be objects ' +
-                    'but string (I am not valid, as I am not an object!) given'
+                    'but string (I am not valid, as I am not an object!) given',
             );
         });
 
@@ -462,7 +462,7 @@ describe('ConfigSet', () => {
                 configSet.mergeUniqueObjects('my_unique_object_setting');
             }).toThrow(
                 'Invalid value for setting my_unique_object_setting: all objects must be unique ' +
-                    'but property "second" has both value (two) and value ([different])'
+                    'but property "second" has both value (two) and value ([different])',
             );
         });
 
@@ -480,7 +480,7 @@ describe('ConfigSet', () => {
                 configSet.mergeUniqueObjects();
             }).toThrow(
                 'Invalid value for setting my_string_setting: all objects must be unique ' +
-                    'but setting has both value (first value) and value ([different])'
+                    'but setting has both value (first value) and value ([different])',
             );
         });
     });

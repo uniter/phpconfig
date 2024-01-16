@@ -23,14 +23,14 @@ const hasOwn = {}.hasOwnProperty;
 function getLibraryConfigFromRoot(
     allConfig: RootConfig,
     mainLibraryName: string,
-    subLibraryName?: string
+    subLibraryName?: string,
 ): SubConfig {
     const mainConfig: string | SubConfig =
         (allConfig.settings ?? {})[mainLibraryName] ?? {};
 
     if (typeof mainConfig !== 'object') {
         throw new Error(
-            `Config for main library "${mainLibraryName}" should be an object`
+            `Config for main library "${mainLibraryName}" should be an object`,
         );
     }
 
@@ -50,7 +50,7 @@ function getLibraryConfigFromRoot(
     return Object.assign(
         {},
         subConfig,
-        mainConfig[subLibraryName]
+        mainConfig[subLibraryName],
     ) as SubConfig;
 }
 
@@ -63,7 +63,7 @@ function getLibraryConfigFromRoot(
  */
 function getMainLibraryConfigPathsFromPlugin(
     pluginConfig: PluginConfig,
-    mainLibraryName: string
+    mainLibraryName: string,
 ): string[] {
     const mainConfig: null | string | SubConfig =
         pluginConfig[mainLibraryName] ?? null;
@@ -92,7 +92,7 @@ function getMainLibraryConfigPathsFromPlugin(
 
         if (typeof pathToMainConfig !== 'string') {
             throw new Error(
-                `Value for main library extended config path "${mainLibraryName}.${mainLibraryName}" should be a path`
+                `Value for main library extended config path "${mainLibraryName}.${mainLibraryName}" should be a path`,
             );
         }
 
@@ -100,7 +100,7 @@ function getMainLibraryConfigPathsFromPlugin(
     }
 
     throw new Error(
-        `Value for main library "${mainLibraryName}" should be a path or object`
+        `Value for main library "${mainLibraryName}" should be a path or object`,
     );
 }
 
@@ -115,7 +115,7 @@ function getMainLibraryConfigPathsFromPlugin(
 function getSubLibraryConfigPathsFromPlugin(
     pluginConfig: PluginConfig,
     mainLibraryName: string,
-    subLibraryName: string
+    subLibraryName: string,
 ): string[] {
     const isolatedPathToSubLibraryConfig: string | SubLibraryConfig | null =
         pluginConfig[subLibraryName] ?? null;
@@ -125,7 +125,7 @@ function getSubLibraryConfigPathsFromPlugin(
     if (hasOwn.call(pluginConfig, subLibraryName)) {
         if (typeof isolatedPathToSubLibraryConfig !== 'string') {
             throw new Error(
-                `Isolated value for sub-library "${subLibraryName}" should be a path`
+                `Isolated value for sub-library "${subLibraryName}" should be a path`,
             );
         }
     }
@@ -137,7 +137,7 @@ function getSubLibraryConfigPathsFromPlugin(
         if (hasOwn.call(mainLibraryConfig, subLibraryName)) {
             if (typeof mainLibraryConfig[subLibraryName] !== 'string') {
                 throw new Error(
-                    `Value for sub-library under "${mainLibraryName}.${subLibraryName}" should be a path`
+                    `Value for sub-library under "${mainLibraryName}.${subLibraryName}" should be a path`,
                 );
             }
 
@@ -147,7 +147,7 @@ function getSubLibraryConfigPathsFromPlugin(
         }
     } else if (typeof mainLibraryConfig !== 'string') {
         throw new Error(
-            `Value for main library extended config path "${mainLibraryName}.${mainLibraryName}" should be a path or object`
+            `Value for main library extended config path "${mainLibraryName}.${mainLibraryName}" should be a path or object`,
         );
     }
 
@@ -178,13 +178,13 @@ function getSubLibraryConfigPathsFromPlugin(
 function getLibraryConfigPathsFromPlugin(
     pluginConfig: PluginConfig,
     mainLibraryName: string,
-    subLibraryName?: string
+    subLibraryName?: string,
 ): string[] {
     return subLibraryName
         ? getSubLibraryConfigPathsFromPlugin(
               pluginConfig,
               mainLibraryName,
-              subLibraryName
+              subLibraryName,
           )
         : getMainLibraryConfigPathsFromPlugin(pluginConfig, mainLibraryName);
 }
@@ -200,7 +200,7 @@ function getLibraryConfigPathsFromPlugin(
 function getLibraryConfigPathsFromPlugins(
     pluginConfigs: PluginConfig[],
     mainLibraryName: string,
-    subLibraryName?: string
+    subLibraryName?: string,
 ): string[] {
     const libraryConfigPaths = [];
 
@@ -208,7 +208,7 @@ function getLibraryConfigPathsFromPlugins(
         const pluginSubLibraryConfigPaths = getLibraryConfigPathsFromPlugin(
             pluginConfig,
             mainLibraryName,
-            subLibraryName
+            subLibraryName,
         );
 
         libraryConfigPaths.push(...pluginSubLibraryConfigPaths);
@@ -229,18 +229,18 @@ export default class ConfigExporter implements ConfigExporterInterface {
     exportLibrary(
         rootConfig: RootConfig,
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): LibraryConfigShape {
         const libraryName = subLibraryName ?? mainLibraryName;
         const topLevelConfig = getLibraryConfigFromRoot(
             rootConfig,
             mainLibraryName,
-            subLibraryName
+            subLibraryName,
         );
 
         if (!this.serialisationChecker.isSerialisable(topLevelConfig)) {
             throw new Error(
-                `Top-level config for library "${libraryName}" is not serialisable`
+                `Top-level config for library "${libraryName}" is not serialisable`,
             );
         }
 
@@ -251,7 +251,7 @@ export default class ConfigExporter implements ConfigExporterInterface {
                 ? getLibraryConfigPathsFromPlugins(
                       rootConfig.plugins,
                       mainLibraryName,
-                      subLibraryName
+                      subLibraryName,
                   )
                 : [],
         };

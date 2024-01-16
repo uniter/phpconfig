@@ -32,7 +32,7 @@ describe('SerialisationChecker', () => {
                     'my_array': [21, 'my element'],
                     'my_string': 'hello world',
                     'my_undefined': undefined,
-                })
+                }),
             ).toEqual(true);
         });
 
@@ -42,7 +42,7 @@ describe('SerialisationChecker', () => {
                     'my_func': () => {
                         return 'functions are not serialisable!';
                     },
-                })
+                }),
             ).toEqual(false);
         });
 
@@ -50,7 +50,7 @@ describe('SerialisationChecker', () => {
             expect(
                 serialisationChecker.isSerialisable({
                     'my_regex': /regexes are not serialisable!/,
-                })
+                }),
             ).toEqual(false);
         });
 
@@ -60,7 +60,7 @@ describe('SerialisationChecker', () => {
             myObject['my_circular_reference'] = myObject;
 
             expect(serialisationChecker.isSerialisable(myObject)).toEqual(
-                false
+                false,
             );
         });
     });

@@ -30,7 +30,7 @@ describe('ConfigLoader', () => {
         StubConfigClass.callsFake(
             (
                 requirer: RequirerInterface,
-                allConfig: RootConfig
+                allConfig: RootConfig,
             ): ConfigInterface => {
                 const config: StubbedInstance<Config> = stubInterface<Config>();
 
@@ -43,11 +43,11 @@ describe('ConfigLoader', () => {
                                 },
                             })[libraryName] as SubConfig,
                         ]);
-                    }
+                    },
                 );
 
                 return config;
-            }
+            },
         );
 
         exporter = stubInterface<ConfigExporterInterface>();
@@ -59,7 +59,7 @@ describe('ConfigLoader', () => {
             loader,
             exporter,
             StubConfigClass,
-            ConfigSet
+            ConfigSet,
         );
     });
 
@@ -74,7 +74,7 @@ describe('ConfigLoader', () => {
                         'my_lib': { my: 'config' },
                     },
                 },
-                sinon.match.same(ConfigSet)
+                sinon.match.same(ConfigSet),
             ).returns(config);
             loader.load.withArgs(['/first/path']).returns({
                 'settings': {
@@ -88,7 +88,7 @@ describe('ConfigLoader', () => {
             //     which causes `TypeError: Result of the Symbol.iterator method is not an object`
             //     to be raised in the for..of loop of expect/build/utils.js::iterableEquality()
             expect(configLoader.getConfig(['/first/path']) === config).toEqual(
-                true
+                true,
             );
         });
 
@@ -102,7 +102,7 @@ describe('ConfigLoader', () => {
             expect(() => {
                 configLoader.getConfig(['/first/path']);
             }).toThrow(
-                'Given root config is invalid: may only specify "plugins" or "settings" or both'
+                'Given root config is invalid: may only specify "plugins" or "settings" or both',
             );
         });
     });

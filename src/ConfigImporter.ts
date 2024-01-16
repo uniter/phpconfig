@@ -21,7 +21,7 @@ export default class ConfigImporter implements ConfigImporterInterface {
      * @inheritDoc
      */
     importLibrary(
-        exportedLibraryConfig: ExportedLibraryConfig
+        exportedLibraryConfig: ExportedLibraryConfig,
     ): ConfigSetInterface {
         return new this.ConfigSetClass(exportedLibraryConfig.configs);
     }

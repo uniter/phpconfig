@@ -29,6 +29,6 @@ export default interface ConfigExporterInterface {
     exportLibrary(
         rootConfig: RootConfig,
         mainLibraryName: string,
-        subLibraryName?: string
+        subLibraryName?: string,
     ): LibraryConfigShape;
 }

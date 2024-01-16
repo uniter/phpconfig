@@ -27,7 +27,7 @@ describe('Config import integration', () => {
         });
 
         expect(
-            importedLibraryConfigSet.mergeObjects('my_object_setting')
+            importedLibraryConfigSet.mergeObjects('my_object_setting'),
         ).toEqual({
             'my_first_prop': 'my first value',
             'my_second_prop': 'my second value',

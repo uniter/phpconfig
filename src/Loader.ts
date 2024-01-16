@@ -18,7 +18,7 @@ export default class Loader implements LoaderInterface {
     constructor(
         private existsSync: (path: string) => boolean,
         private requirer: RequirerInterface,
-        private fileName: string
+        private fileName: string,
     ) {}
 
     /**
