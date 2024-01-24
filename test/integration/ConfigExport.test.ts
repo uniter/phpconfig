@@ -9,6 +9,7 @@
 
 import { createConfigLoader } from '../..';
 import { existsSync } from 'fs';
+import { expect } from 'chai';
 import ConfigLoaderInterface from '../../src/ConfigLoaderInterface';
 
 describe('Config export integration', () => {
@@ -23,7 +24,7 @@ describe('Config export integration', () => {
             .getConfig([__dirname + '/fixtures/plugin_test'])
             .exportLibrary('my_main_lib', 'my_parser_lib');
 
-        expect(exportedLibraryConfig).toEqual({
+        expect(exportedLibraryConfig).to.deep.equal({
             libraryName: 'my_parser_lib',
             topLevelConfig: {
                 'my_parser_setting_from_root_1':

@@ -9,6 +9,7 @@
 
 import { createConfigLoader } from '../..';
 import { existsSync } from 'fs';
+import { expect } from 'chai';
 import ConfigLoaderInterface from '../../src/ConfigLoaderInterface';
 
 describe('Config load integration', () => {
@@ -28,7 +29,7 @@ describe('Config load integration', () => {
             ])
             .getConfigsForLibrary('my_lib');
 
-        expect(configSet.toArray()).toEqual([
+        expect(configSet.toArray()).to.deep.equal([
             {
                 'my_setting': 'my value',
             },
@@ -47,7 +48,7 @@ describe('Config load integration', () => {
             transpilerLibConfigSet =
                 config.getConfigsForLibrary('my_transpiler_lib');
 
-        expect(mainLibConfigSet.toArray()).toEqual([
+        expect(mainLibConfigSet.toArray()).to.deep.equal([
             {
                 'my_parser_lib': {
                     'my_non_parser_lib_setting':
@@ -62,7 +63,7 @@ describe('Config load integration', () => {
                 },
             },
         ]);
-        expect(parserLibConfigSet.toArray()).toEqual([
+        expect(parserLibConfigSet.toArray()).to.deep.equal([
             { 'my_parser_setting': 'my first value from combined plugin' },
             { 'my_parser_setting': 'my value from plugin 1' },
             {
@@ -78,7 +79,7 @@ describe('Config load integration', () => {
                     'my custom value from root for sub-library',
             },
         ]);
-        expect(transpilerLibConfigSet.toArray()).toEqual([
+        expect(transpilerLibConfigSet.toArray()).to.deep.equal([
             { 'my_transpiler_setting': 'my second value from combined plugin' },
             {
                 'my_transpiler_setting':

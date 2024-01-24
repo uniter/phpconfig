@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import sinon, { StubbedInstance, stubInterface } from 'ts-sinon';
 import Config from '../../src/Config';
 import ConfigExporterInterface from '../../src/ConfigExporterInterface';
@@ -82,14 +83,7 @@ describe('ConfigLoader', () => {
                 },
             });
 
-            // NB: We cannot use expect(result).toStrictEqual(config) here,
-            //     because of the strange way Jest recursively attempts to match for a strict equality -
-            //     Sinon stubs the [Symbol.iterator] method, so that it then returns undefined,
-            //     which causes `TypeError: Result of the Symbol.iterator method is not an object`
-            //     to be raised in the for..of loop of expect/build/utils.js::iterableEquality()
-            expect(configLoader.getConfig(['/first/path']) === config).toEqual(
-                true,
-            );
+            expect(configLoader.getConfig(['/first/path'])).to.equal(config);
         });
 
         it('should throw when the given config is invalid', () => {
@@ -101,7 +95,7 @@ describe('ConfigLoader', () => {
 
             expect(() => {
                 configLoader.getConfig(['/first/path']);
-            }).toThrow(
+            }).to.throw(
                 'Given root config is invalid: may only specify "plugins" or "settings" or both',
             );
         });

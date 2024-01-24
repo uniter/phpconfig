@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import sinon, { StubbedInstance, stubInterface } from 'ts-sinon';
 import Loader from '../../src/Loader';
 import RequirerInterface from '../../src/RequirerInterface';
@@ -33,13 +34,15 @@ describe('Loader', () => {
                 .withArgs('/second/path/my.file.ext')
                 .returns({ my: 'config' });
 
-            expect(loader.load(['/first/path', '/second/path'])).toEqual({
+            expect(loader.load(['/first/path', '/second/path'])).to.deep.equal({
                 my: 'config',
             });
         });
 
         it('should return an empty object when the file is not found at any of the search paths', () => {
-            expect(loader.load(['/first/path', '/second/path'])).toEqual({});
+            expect(loader.load(['/first/path', '/second/path'])).to.deep.equal(
+                {},
+            );
         });
     });
 });

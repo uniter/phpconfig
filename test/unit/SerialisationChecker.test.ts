@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import SerialisationChecker from '../../src/SerialisationChecker';
 
 describe('SerialisationChecker', () => {
@@ -33,7 +34,7 @@ describe('SerialisationChecker', () => {
                     'my_string': 'hello world',
                     'my_undefined': undefined,
                 }),
-            ).toEqual(true);
+            ).to.equal(true);
         });
 
         it('should return false for an object containing a function', () => {
@@ -43,7 +44,7 @@ describe('SerialisationChecker', () => {
                         return 'functions are not serialisable!';
                     },
                 }),
-            ).toEqual(false);
+            ).to.equal(false);
         });
 
         it('should return false for an object containing a regex', () => {
@@ -51,7 +52,7 @@ describe('SerialisationChecker', () => {
                 serialisationChecker.isSerialisable({
                     'my_regex': /regexes are not serialisable!/,
                 }),
-            ).toEqual(false);
+            ).to.equal(false);
         });
 
         it('should return false for a circular structure', () => {
@@ -59,7 +60,7 @@ describe('SerialisationChecker', () => {
 
             myObject['my_circular_reference'] = myObject;
 
-            expect(serialisationChecker.isSerialisable(myObject)).toEqual(
+            expect(serialisationChecker.isSerialisable(myObject)).to.equal(
                 false,
             );
         });

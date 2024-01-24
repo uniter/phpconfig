@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import Config from '../../src/Config';
 import { StubbedInstance, stubInterface } from 'ts-sinon';
 import RequirerInterface from '../../src/RequirerInterface';
@@ -59,7 +60,9 @@ describe('Config', () => {
                     ],
                 });
 
-            expect(config.exportLibrary('my_main_lib', 'my_sub_lib')).toEqual({
+            expect(
+                config.exportLibrary('my_main_lib', 'my_sub_lib'),
+            ).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'my_setting': 21,
@@ -90,7 +93,7 @@ describe('Config', () => {
                 'my_sub_lib',
             );
 
-            expect(configSet.toArray()).toEqual([
+            expect(configSet.toArray()).to.deep.equal([
                 {
                     'my_first_setting': 21,
                     'my_second_setting': 456,
@@ -126,7 +129,7 @@ describe('Config', () => {
                 'my_sub_lib',
             );
 
-            expect(configSet.toArray()).toEqual([
+            expect(configSet.toArray()).to.deep.equal([
                 {
                     'my_third_setting': 101,
                 },
@@ -157,7 +160,7 @@ describe('Config', () => {
                 'my_sub_lib',
             );
 
-            expect(configSet.toArray()).toEqual([
+            expect(configSet.toArray()).to.deep.equal([
                 {
                     'my_setting': 101,
                 },
@@ -177,7 +180,7 @@ describe('Config', () => {
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib');
-            }).toThrow(
+            }).to.throw(
                 'Imported config for main library "my_main_lib" should be an object',
             );
         });
@@ -197,7 +200,7 @@ describe('Config', () => {
 
             expect(() => {
                 config.getConfigsForLibrary('my_main_lib', 'my_sub_lib');
-            }).toThrow(
+            }).to.throw(
                 'Imported config for sub-library "my_sub_lib" under main library "my_main_lib" should be an object',
             );
         });

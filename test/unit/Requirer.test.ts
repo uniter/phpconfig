@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import Requirer from '../../src/Requirer';
 import sinon from 'ts-sinon';
 
@@ -27,7 +28,7 @@ describe('Requirer', () => {
             const myExports = { myProp: 21 };
             nodeRequire.withArgs('/my/path/to/my_module').returns(myExports);
 
-            expect(requirer.require('/my/path/to/my_module')).toEqual(
+            expect(requirer.require('/my/path/to/my_module')).to.deep.equal(
                 myExports,
             );
         });

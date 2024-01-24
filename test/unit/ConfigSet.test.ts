@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import ConfigSet from '../../src/ConfigSet';
 
 describe('ConfigSet', () => {
@@ -36,7 +37,7 @@ describe('ConfigSet', () => {
 
     describe('concatArrays()', () => {
         it('should correctly concatenate elements from all arrays for the specified setting', () => {
-            expect(configSet.concatArrays('my_array_setting')).toEqual([
+            expect(configSet.concatArrays('my_array_setting')).to.deep.equal([
                 'my first value',
                 'my second value',
                 'my third value',
@@ -59,7 +60,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.concatArrays('my_array_setting')).toEqual([
+            expect(configSet.concatArrays('my_array_setting')).to.deep.equal([
                 'first',
                 'second',
             ]);
@@ -77,7 +78,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.concatArrays('my_array_setting');
-            }).toThrow(
+            }).to.throw(
                 'Invalid value for setting my_array_setting: all values must be arrays ' +
                     'but string (I am not valid, as I am not an array!) given',
             );
@@ -88,7 +89,9 @@ describe('ConfigSet', () => {
         it('should return the default value of true when no config specifies a value for the setting', () => {
             configSet = new ConfigSet([{ 'my-other-setting': 21 }, {}, {}]);
 
-            expect(configSet.getBoolean('my-setting', true)).toEqual(true);
+            expect(configSet.getBoolean('my-setting', true)).to.deep.equal(
+                true,
+            );
         });
 
         it('should return the default value of false when no config specifies a value for the setting', () => {
@@ -98,7 +101,9 @@ describe('ConfigSet', () => {
                 {},
             ]);
 
-            expect(configSet.getBoolean('my-setting', false)).toEqual(false);
+            expect(configSet.getBoolean('my-setting', false)).to.deep.equal(
+                false,
+            );
         });
 
         it("should allow later configs' values to take precedence", () => {
@@ -118,7 +123,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.getBoolean('myBoolean')).toEqual(true);
+            expect(configSet.getBoolean('myBoolean')).to.equal(true);
         });
 
         it('should raise an error when the final value for the setting has a non-boolean value', () => {
@@ -136,7 +141,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.getBoolean('myBoolean');
-            }).toThrow(
+            }).to.throw(
                 'Expected value for setting "myBoolean" to be a boolean but it was a string',
             );
         });
@@ -146,7 +151,7 @@ describe('ConfigSet', () => {
         it('should just return an empty object when only empty configs given', () => {
             configSet = new ConfigSet([{}, {}, {}]);
 
-            expect(configSet.mergeAll()).toEqual({});
+            expect(configSet.mergeAll()).to.deep.equal({});
         });
 
         it("should allow later configs' scalar values to take precedence", () => {
@@ -166,7 +171,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeAll()).toEqual({
+            expect(configSet.mergeAll()).to.deep.equal({
                 myBoolean: true,
                 myNumber: 987,
                 myString: 'well hello!',
@@ -187,7 +192,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeAll()).toEqual({
+            expect(configSet.mergeAll()).to.deep.equal({
                 myObject: { first: 21, second: 101 },
                 yourObject: { aNumber: 987 },
             });
@@ -208,13 +213,13 @@ describe('ConfigSet', () => {
 
             configSet.mergeAll();
 
-            expect(config1).toEqual({
+            expect(config1).to.deep.equal({
                 myObject: { first: 21 },
             });
-            expect(config2).toEqual({
+            expect(config2).to.deep.equal({
                 yourObject: { aNumber: 987 },
             });
-            expect(config3).toEqual({
+            expect(config3).to.deep.equal({
                 myObject: { second: 101 },
             });
         });
@@ -232,7 +237,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeAll()).toEqual({
+            expect(configSet.mergeAll()).to.deep.equal({
                 myArray: ['first', 'second'],
                 yourArray: ['a value'],
             });
@@ -253,13 +258,13 @@ describe('ConfigSet', () => {
 
             configSet.mergeAll();
 
-            expect(object1).toEqual({
+            expect(object1).to.deep.equal({
                 myArray: ['first'],
             });
-            expect(object2).toEqual({
+            expect(object2).to.deep.equal({
                 yourArray: ['a value'],
             });
-            expect(object3).toEqual({
+            expect(object3).to.deep.equal({
                 myArray: ['second'],
             });
         });
@@ -277,7 +282,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeAll()).toEqual({
+            expect(configSet.mergeAll()).to.deep.equal({
                 myValue: ['my first element', 'my second element'],
                 yourScalar: 'a value',
             });
@@ -286,7 +291,7 @@ describe('ConfigSet', () => {
 
     describe('mergeObjects()', () => {
         it('should correctly merge all object values for the specified setting', () => {
-            expect(configSet.mergeObjects('my_object_setting')).toEqual({
+            expect(configSet.mergeObjects('my_object_setting')).to.deep.equal({
                 'first': '[overridden]', // Note that later configs should take precedence
                 'second': 'two',
                 'and third': 'three',
@@ -309,7 +314,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeObjects('my_object_setting')).toEqual({
+            expect(configSet.mergeObjects('my_object_setting')).to.deep.equal({
                 'first': 'one',
                 'last': 'two',
             });
@@ -328,7 +333,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.mergeObjects('my_object_setting');
-            }).toThrow(
+            }).to.throw(
                 'Invalid value for setting my_object_setting: all values must be objects ' +
                     'but string (I am not valid, as I am not an object!) given',
             );
@@ -339,7 +344,7 @@ describe('ConfigSet', () => {
         it('should correctly merge all object values for the specified setting', () => {
             expect(
                 configSet.mergeUniqueObjects('my_unique_object_setting'),
-            ).toEqual({
+            ).to.deep.equal({
                 'first': 'one',
                 'second': 'two',
             });
@@ -351,7 +356,7 @@ describe('ConfigSet', () => {
                 { 'second': 'two' },
             ]);
 
-            expect(configSet.mergeUniqueObjects()).toEqual({
+            expect(configSet.mergeUniqueObjects()).to.deep.equal({
                 'first': 'one',
                 'second': 'two',
             });
@@ -375,7 +380,7 @@ describe('ConfigSet', () => {
 
             expect(
                 configSet.mergeUniqueObjects('my_unique_object_setting'),
-            ).toEqual({
+            ).to.deep.equal({
                 'first': 'one',
                 'last': 'two',
             });
@@ -399,7 +404,7 @@ describe('ConfigSet', () => {
 
             expect(
                 configSet.mergeUniqueObjects('my_unique_object_setting'),
-            ).toEqual({
+            ).to.deep.equal({
                 'first': 'one',
                 'second': 'two',
                 'third': 'three',
@@ -417,7 +422,7 @@ describe('ConfigSet', () => {
                 },
             ]);
 
-            expect(configSet.mergeUniqueObjects()).toEqual({
+            expect(configSet.mergeUniqueObjects()).to.deep.equal({
                 'my_string_setting': 'one',
                 'my_number_setting': 123,
             });
@@ -439,7 +444,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.mergeUniqueObjects('my_unique_object_setting');
-            }).toThrow(
+            }).to.throw(
                 'Invalid value for setting my_unique_object_setting: all values must be objects ' +
                     'but string (I am not valid, as I am not an object!) given',
             );
@@ -460,7 +465,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.mergeUniqueObjects('my_unique_object_setting');
-            }).toThrow(
+            }).to.throw(
                 'Invalid value for setting my_unique_object_setting: all objects must be unique ' +
                     'but property "second" has both value (two) and value ([different])',
             );
@@ -478,7 +483,7 @@ describe('ConfigSet', () => {
 
             expect(() => {
                 configSet.mergeUniqueObjects();
-            }).toThrow(
+            }).to.throw(
                 'Invalid value for setting my_string_setting: all objects must be unique ' +
                     'but setting has both value (first value) and value ([different])',
             );
@@ -487,7 +492,7 @@ describe('ConfigSet', () => {
 
     describe('toArray()', () => {
         it('should just return the underlying raw config data objects', () => {
-            expect(configSet.toArray()).toEqual([
+            expect(configSet.toArray()).to.deep.equal([
                 {
                     'my_first_setting': 'my first value',
                     'my_second_setting': 'my second value',

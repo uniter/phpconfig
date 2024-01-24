@@ -8,6 +8,7 @@
  */
 
 import { configImporter } from '../..';
+import { expect } from 'chai';
 
 describe('Config import integration', () => {
     it('should import the config for the specified sub-library', () => {
@@ -28,7 +29,7 @@ describe('Config import integration', () => {
 
         expect(
             importedLibraryConfigSet.mergeObjects('my_object_setting'),
-        ).toEqual({
+        ).to.deep.equal({
             'my_first_prop': 'my first value',
             'my_second_prop': 'my second value',
         });

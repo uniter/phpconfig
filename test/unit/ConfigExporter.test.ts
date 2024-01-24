@@ -7,6 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
+import { expect } from 'chai';
 import { StubbedInstance, stubInterface } from 'ts-sinon';
 import ConfigExporter from '../../src/ConfigExporter';
 import SerialisationCheckerInterface from '../../src/SerialisationCheckerInterface';
@@ -50,7 +51,7 @@ describe('ConfigExporter', () => {
                 'my_sub_lib',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'first_setting': '[overridden] first value',
@@ -66,7 +67,7 @@ describe('ConfigExporter', () => {
                 'my_sub_lib',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'first_setting': 'first value',
@@ -82,7 +83,7 @@ describe('ConfigExporter', () => {
                 'an_invalid_undefined_lib_config',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'an_invalid_undefined_lib_config',
                 topLevelConfig: {},
                 pluginConfigFilePaths: [],
@@ -96,7 +97,7 @@ describe('ConfigExporter', () => {
                 'my_sub_lib',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'first_setting': 'first value',
@@ -113,7 +114,7 @@ describe('ConfigExporter', () => {
                 'an_invalid_undefined_sub_lib',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'an_invalid_undefined_sub_lib',
                 topLevelConfig: {},
                 pluginConfigFilePaths: [],
@@ -152,7 +153,7 @@ describe('ConfigExporter', () => {
                 'my_sub_lib',
             );
 
-            expect(configShape).toEqual({
+            expect(configShape).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'first_setting': '[overridden] first value',
@@ -199,7 +200,9 @@ describe('ConfigExporter', () => {
                 },
             };
 
-            expect(exporter.exportLibrary(rootConfig, 'my_main_lib')).toEqual({
+            expect(
+                exporter.exportLibrary(rootConfig, 'my_main_lib'),
+            ).to.deep.equal({
                 libraryName: 'my_main_lib',
                 topLevelConfig: {
                     // NB: See note above about why this is included here
@@ -211,7 +214,7 @@ describe('ConfigExporter', () => {
             });
             expect(
                 exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib'),
-            ).toEqual({
+            ).to.deep.equal({
                 libraryName: 'my_sub_lib',
                 topLevelConfig: {
                     'first_setting': '[overridden] first value',
@@ -236,7 +239,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib');
-            }).toThrow(
+            }).to.throw(
                 'Value for main library "my_main_lib" should be a path or object',
             );
         });
@@ -255,7 +258,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib');
-            }).toThrow(
+            }).to.throw(
                 'Value for main library extended config path "my_main_lib.my_main_lib" should be a path',
             );
         });
@@ -274,7 +277,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib');
-            }).toThrow(
+            }).to.throw(
                 'Value for sub-library under "my_main_lib.my_sub_lib" should be a path',
             );
         });
@@ -291,7 +294,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib');
-            }).toThrow(
+            }).to.throw(
                 'Value for main library extended config path "my_main_lib.my_main_lib" should be a path or object',
             );
         });
@@ -319,7 +322,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib');
-            }).toThrow(
+            }).to.throw(
                 'Isolated value for sub-library "my_sub_lib" should be a path',
             );
         });
@@ -330,7 +333,7 @@ describe('ConfigExporter', () => {
                     rootConfig,
                     'an_invalid_boolean_lib_config',
                 );
-            }).toThrow(
+            }).to.throw(
                 'Config for main library "an_invalid_boolean_lib_config" should be an object',
             );
         });
@@ -341,7 +344,7 @@ describe('ConfigExporter', () => {
                 'a_null_lib_config',
             );
 
-            expect(configShape.topLevelConfig).toEqual({});
+            expect(configShape.topLevelConfig).to.deep.equal({});
         });
 
         it("should throw when the main library's config is a number", () => {
@@ -350,7 +353,7 @@ describe('ConfigExporter', () => {
                     rootConfig,
                     'an_invalid_number_lib_config',
                 );
-            }).toThrow(
+            }).to.throw(
                 'Config for main library "an_invalid_number_lib_config" should be an object',
             );
         });
@@ -361,7 +364,7 @@ describe('ConfigExporter', () => {
                     rootConfig,
                     'an_invalid_string_lib_config',
                 );
-            }).toThrow(
+            }).to.throw(
                 'Config for main library "an_invalid_string_lib_config" should be an object',
             );
         });
@@ -376,7 +379,7 @@ describe('ConfigExporter', () => {
 
             expect(() => {
                 exporter.exportLibrary(rootConfig, 'my_main_lib', 'my_sub_lib');
-            }).toThrow(
+            }).to.throw(
                 'Top-level config for library "my_sub_lib" is not serialisable',
             );
         });
