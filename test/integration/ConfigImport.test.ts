@@ -7,7 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { configImporter } from '../..';
+import { configImporter } from '../../src';
 import { expect } from 'chai';
 
 describe('Config import integration', () => {

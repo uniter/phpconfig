@@ -7,7 +7,7 @@
  * https://github.com/uniter/phpconfig/raw/master/MIT-LICENSE.txt
  */
 
-import { createConfigLoader } from '../..';
+import { createConfigLoader } from '../../src';
 import { existsSync } from 'fs';
 import { expect } from 'chai';
 import ConfigLoaderInterface from '../../src/ConfigLoaderInterface';
